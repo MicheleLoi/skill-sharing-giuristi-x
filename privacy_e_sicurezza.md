@@ -42,7 +42,7 @@ Stessa cosa:
 
 - **Nome + email opzionale**. Stesso scopo, stesso trattamento. Se metti la mail, ricevi il link permanente "Modifica/cancella" (valido 365 giorni).
 - **Contenuto** (stelle + testo per le recensioni; prompt + risposta errata + correzione per le segnalazioni di errore).
-- C'è una **checkbox "Pubblica anonima"**: se la spunti, il tuo nome non viene mostrato pubblicamente. Resta nel database ma sostituito dalla dicitura *"Avvocato (anonimo)"* sulla pagina.
+- C'è una **checkbox "Pubblica anonima"**: se la spunti, il tuo nome **non viene salvato in database**. Un meccanismo automatico al livello del database (un *trigger* Postgres) intercetta la scrittura e sostituisce il nome con la stringa letterale `(anonimo)` un istante prima che la riga venga creata — quindi sul disco resta solo l'etichetta, mai il tuo nome reale. La pagina pubblica mostra *"Avv. (anonimo)"*. **Non è recuperabile**: se in futuro cambi idea e vuoi rivelarti, devi ri-pubblicare il contributo firmato.
 
 #### Quando voti "Utile"
 
@@ -164,7 +164,7 @@ C'è il banner giallo nella tab Errori che te lo ricorda, ma vale la pena ripete
 
 Per anonimizzare ti consigliamo **Recode IT** ([`recode.micheleloi.pro`](https://recode.micheleloi.pro)). Recode gira **interamente nel tuo browser** — non manda niente a server esterni. Sostituisce nomi reali con pseudonimi coerenti (es. Mario Rossi → Tizio) e ti permette di ri-sostituire al contrario quando lavori sul tuo documento.
 
-Se nonostante l'attenzione un caso è ancora riconducibile a una persona identificabile, hai la **checkbox "Pubblica anonima"** che almeno nasconde il tuo nome di chi ha pubblicato. E in fondo c'è sempre il modulo di richiesta rimozione.
+Se nonostante l'attenzione un caso è ancora riconducibile a una persona identificabile, hai la **checkbox "Pubblica anonima"** che **rimuove il tuo nome al livello del database** (vedi sopra in *Dati raccolti*: un trigger lo sostituisce con `(anonimo)` un istante prima della scrittura — il nome reale non viene mai persistito). E in fondo c'è sempre il modulo di richiesta rimozione.
 
 ### Trust model: di chi ti fidi quando usi questo sito
 
