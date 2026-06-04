@@ -20,6 +20,7 @@ Due tab in alto:
 - **Non è consulenza legale.** Le skill e i prompt sono strumenti che l'avvocato decide di usare a propria responsabilità. La piattaforma non si fa carico dell'esito.
 - **Non sostituisce verifica delle fonti.** Le istruzioni stesse possono marcare `[VERIFICA]` i punti delicati. L'avvocato controlla i riferimenti normativi prima di usarli in atto.
 - **Non è un marketplace commerciale.** Non si paga per pubblicare, non si paga per leggere, non si compra niente. I contributi sono della comunità a beneficio della comunità.
+- **Non è un posto per recensire tool o servizi commerciali interi.** Quello che si pubblica nella tab *Skill e prompt* sono **istruzioni testuali** che dai a un'AI: prompt grezzi, SKILL.md, frammenti di CLAUDE.md, orchestrazioni MCP. Lexroom, BuddaLaw, One Legale, Top24, libra, 4c.ai, Manus, Calpurnio e simili sono **programmi interi**, non skill — non vanno qui. Se hai osservato un loro errore fattuale su un caso concreto, c'è la tab *Errori dell'AI* (vedi sotto, con la regola "descrivi cosa è successo, non valutare il prodotto").
 - **Non c'è moderazione preventiva.** Quello che pubblichi va live subito, senza che nessuno controlli prima. La qualità la giudica la community con stelle, recensioni e segnalazioni.
 
 ---
@@ -111,6 +112,17 @@ Toast di conferma. Reload pagina → vedi la tua recensione nella scheda.
 ## Come segnalare un errore dell'AI
 
 Le segnalazioni servono per **avvisare i colleghi** di trappole note dell'AI in contesti legali italiani. Esempio classico: l'AI cita una sentenza Cassazione che non esiste, ma con confidenza alta.
+
+### Regola del framing: fatto + contesto + prova, non valutazione del prodotto
+
+Qui si registrano **errori fattuali osservati**, non opinioni sul tool. Sono ammessi i nomi dei prodotti (Claude, ChatGPT, Lexroom, BuddaLaw, One Legale, ecc.) *se* servono a inquadrare l'errore. Esempi:
+
+- ✅ Va bene: *"Lexroom su NIS2 ha lasciato fuori 3 determinazioni ACN — verificato sul sito ACN, decisioni n. X, Y, Z del 2025"*
+- ✅ Va bene: *"Claude ha citato Cass. n. 12345/2025 — sentenza inesistente, verificato su CED"*
+- ❌ Non va bene: *"Lexroom è scadente"* / *"non lo userei mai"*
+- ❌ Non va bene: *"BuddaLaw è meglio di Lexroom"* (è un giudizio comparativo di prodotto, non un errore osservato)
+
+Se quello che vuoi condividere è una recensione di un tool intero (cosa fa bene, cosa fa male nel complesso, vale i suoi soldi), questo non è il posto giusto: il sito non ospita recensioni di prodotti commerciali.
 
 ### ⚠️ Prima — Anonimizza il caso
 
@@ -306,6 +318,14 @@ Se non sai quale scegliere, lascia "non specifico". Va benissimo — il sito tra
 ### Posso pubblicare una skill o un prompt che esiste già su GitHub?
 
 Sì. Linka il repo GitHub nel campo apposito. Il contributo resta versionato su GitHub, qui c'è una copia con discussione e recensioni.
+
+### Posso recensire Lexroom (o un altro tool/servizio commerciale)?
+
+**No.** Lexroom, BuddaLaw, One Legale, Top24, libra, 4c.ai, Manus, Calpurnio e i loro simili sono **programmi interi**, non skill o prompt. Le recensioni di prodotto (cosa fa bene, cosa fa male nel complesso, se vale i soldi) non hanno casa qui — questo è un posto per condividere *istruzioni testuali* che ciascuno scrive per la propria AI.
+
+### Posso segnalare un errore di Lexroom (o di un altro tool commerciale)?
+
+**Sì**, nella tab *Errori dell'AI*, con la regola del framing: fatto + contesto + prova, niente valutazione del prodotto. Esempio: *"Lexroom su NIS2 ha lasciato fuori 3 determinazioni ACN — verificato sul sito ACN, decisioni n. X, Y, Z del 2025"* è ammesso (è un errore fattuale verificabile). *"Lexroom è scadente"* non lo è. Vedi la sezione [Come segnalare un errore dell'AI](#come-segnalare-un-errore-dellai) per dettagli.
 
 ### Cosa succede ai miei dati?
 
