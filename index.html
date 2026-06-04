@@ -2145,21 +2145,26 @@ async function submitForm(e) {
 
   if (BACKEND_ENABLED) {
     try {
+      // artifact_type incluso solo se valorizzato — la column è nullable e
+      // potrebbe non esistere ancora nel DB (migration apply manuale via
+      // Supabase Dashboard). Omettere il campo evita errore "column does not
+      // exist" su DB ancora non migrato.
+      const payload = {
+        title,
+        author_name: author,
+        anonymous: false,
+        area,
+        ai_compatibility: ["Claude"],
+        description: desc,
+        content,
+        github_url: github,
+        references_text: refs,
+      };
+      if (artifact_type) payload.artifact_type = artifact_type;
       const resp = await sbFunction("submit-with-email", {
         kind: "skill",
         email: email,
-        payload: {
-          title,
-          author_name: author,
-          anonymous: false,
-          area,
-          ai_compatibility: ["Claude"],
-          description: desc,
-          content,
-          github_url: github,
-          references_text: refs,
-          artifact_type: artifact_type,
-        },
+        payload: payload,
       });
       // Aggiungi alla lista locale per immediato feedback
       const newSkill = {
