@@ -1127,31 +1127,47 @@
 
       <h3>Come pubblicare una skill o un prompt</h3>
 
-      <p><strong>Prerequisiti</strong>: devi essere un avvocato (o praticante / docente / magistrato / notaio) del gruppo Giuristi AI. Niente login, niente account — si parte dal fatto che tu sei già nel cerchio.</p>
+      <p><strong>Prerequisiti</strong>: essere parte del gruppo <em>Giuristi AI</em>. Niente login, niente account — si parte dal fatto che tu sei già nel cerchio.</p>
 
       <h4>Passo 1 — Click "Condividi le tue istruzioni"</h4>
 
       <p>In alto a destra, bottone azzurro.</p>
 
-      <h4>Passo 2 — Compila i campi del modale</h4>
+      <h4>Passo 2 — Scegli la modalità</h4>
+
+      <p>In cima al modale, scegli <strong>cosa stai pubblicando</strong> con un radio button — tre opzioni:</p>
+
+      <ul>
+        <li><strong>Una mia skill o prompt</strong> <em>(default)</em> — l'hai scritta tu. Pubblichi con una licenza che scegli (10 valori; default CC-BY-SA 4.0). Mantieni il diritto d'autore.</li>
+        <li><strong>Skill di un collega del gruppo (che mi ha autorizzato)</strong> — un collega del gruppo <em>Giuristi AI</em> ti ha autorizzato a condividere la sua skill. Compili un campo extra <em>"Nome dell'autore originale"</em>. Anche qui scegli una licenza (di default CC-BY-SA 4.0).</li>
+        <li><strong>Skill o prompt visto altrove (non del gruppo)</strong> — hai visto una skill o un prompt scritto da una persona terza (es. GitHub esterno, articolo) e la giri al gruppo. Compili <em>"Nome dell'autore originale"</em> + <em>"Link alla fonte esterna"</em>. Non scegli licenza al submit (default <code>TBD</code> in DB) — la licenza è quella della fonte originale, che chi la usa va a verificare.</li>
+      </ul>
+
+      <p><strong>Importante</strong>: la modalità <em>external</em> non è per recensire tool o servizi commerciali (Lexroom, BuddaLaw, One Legale, ecc.) — quelli sono programmi interi, non skill. Se hai osservato un <em>errore fattuale</em> di uno di quei tool, vai nella tab <strong>Errori dell'AI</strong>.</p>
+
+      <h4>Passo 3 — Compila i campi del modale</h4>
 
       <table>
         <thead>
           <tr><th>Campo</th><th>Cosa scrivere</th></tr>
         </thead>
         <tbody>
+          <tr><td><strong>Cosa stai pubblicando</strong></td><td>Radio: una mia skill / di un collega autorizzato / vista altrove.</td></tr>
           <tr><td><strong>Il tuo nome</strong></td><td>Es. <em>Avv. Maria Rossi</em>. Va pubblicato (vedi anonimato sotto).</td></tr>
+          <tr><td><strong>Nome dell'autore originale</strong> <em>(solo modalità collega / external)</em></td><td>Chi ha scritto la skill (collega del gruppo, o autore terzo se modalità external).</td></tr>
           <tr><td><strong>Titolo</strong></td><td>Una riga descrittiva. Es. <em>"Bozza ricorso TAR — vizi atto"</em>.</td></tr>
           <tr><td><strong>Area legale</strong></td><td>Scegli dal menu: civile / penale / lavoro / amministrativo / commerciale / privacy / societario / tributario / contenzioso / ip / generale.</td></tr>
           <tr><td><strong>Cosa fanno queste istruzioni</strong></td><td>2-3 righe per un collega: cosa ottiene chi le usa.</td></tr>
           <tr><td><strong>Le istruzioni che dai all'AI</strong></td><td>Il testo vero e proprio da dare all'AI. Puoi usare un prompt grezzo, formato Markdown, frontmatter SKILL.md (<code>name / description / when_to_use</code> + body), frammento di CLAUDE.md, o altro. Vedi esempi sotto.</td></tr>
-          <tr><td><strong>GitHub</strong> <em>(opzionale)</em></td><td>Link al repo se la skill vive su GitHub. Altrimenti lascia vuoto.</td></tr>
+          <tr><td><strong>GitHub</strong> <em>(opzionale)</em></td><td>Link al repo se la skill vive su GitHub. Se incollato, il sito <strong>prova ad auto-rilevare la licenza dal repo</strong> via API GitHub: se trova un SPDX id mappabile (CC-BY-SA, MIT, GPL, ecc.) preseleziona automaticamente il select Licenza.</td></tr>
+          <tr><td><strong>Link alla fonte esterna</strong> <em>(solo modalità external)</em></td><td>URL dove hai trovato la skill.</td></tr>
+          <tr><td><strong>Licenza</strong> <em>(modalità self / collega)</em></td><td>Scegli fra 10 valori — vedi sezione "Licenze" sotto. C'è un'icona "i" che apre una spiegazione di ciascuna. Default: CC-BY-SA 4.0.</td></tr>
           <tr><td><strong>Riferimenti normativi</strong> <em>(opzionale)</em></td><td>Articoli, leggi, sentenze da consultare.</td></tr>
           <tr><td><strong>Tipo di artefatto</strong> <em>(opzionale)</em></td><td>Aiuta i colleghi a capire cos'è quello che stai condividendo. Cinque valori — vedi sezione "Tipo di artefatto" sotto. Se non sai quale scegliere, lascia "non specifico" — va benissimo.</td></tr>
         </tbody>
       </table>
 
-      <h4>Passo 3 — Click "Pubblica"</h4>
+      <h4>Passo 4 — Click "Pubblica"</h4>
 
       <p>Il contributo va live subito. Reload pagina e lo vedi in cima alla griglia.</p>
 
@@ -1459,10 +1475,55 @@ when_to_use: Quando attivare questa skill (descrizione del trigger).
 
       <h3>Licenze</h3>
 
+      <p><strong>Per le skill</strong> la licenza la scegli tu al momento del submit, fra 10 valori ammessi:</p>
+
       <ul>
-        <li><strong>Codice del sito</strong>: AGPL-3.0 (<code>LICENSE</code> nel repo)</li>
-        <li><strong>Contenuti utente</strong> (skill, prompt, recensioni, errori): CC-BY-SA 4.0 quando l'idea diventa prodotto reale. Per ora il prototipo è esplorativo.</li>
+        <li><strong>CC-BY-SA 4.0</strong> <em>(default)</em> — condividi liberamente con attribuzione e stessa licenza</li>
+        <li><strong>CC-BY 4.0</strong> — condividi con attribuzione</li>
+        <li><strong>CC-BY-NC 4.0</strong> — solo uso non commerciale (attenzione: l'uso forense pagato può essere commerciale)</li>
+        <li><strong>CC0 1.0</strong> — dominio pubblico</li>
+        <li><strong>Proprietary</strong> — tutti i diritti riservati</li>
+        <li><strong>MIT</strong> / <strong>Apache 2.0</strong> / <strong>GPL 3.0</strong> / <strong>AGPL 3.0</strong> — licenze software permissive o copyleft (per skill in formato plugin Claude Code, MCP, ecc.)</li>
+        <li><strong>Da definire</strong> — non scegli ora; reverte al default</li>
       </ul>
+
+      <p>Mantieni il diritto d'autore: puoi sempre vendere la tua skill con licenza diversa a clienti specifici (dual-licensing).</p>
+
+      <p>Sul modale Condividi c'è un'icona "i" che apre una spiegazione di ciascuna licenza con link a fonti autoritative italiane (Creative Commons Italia per CC, gnu.org IT per GPL/AGPL). Se nel campo GitHub incolli l'URL di un repo, il sito <strong>prova ad auto-rilevare la licenza</strong> dal repo via API GitHub e la pre-seleziona.</p>
+
+      <p><strong>Per skill in modalità "external"</strong> (skill viste altrove, non del gruppo) non scegli la licenza al submit: la licenza è quella della fonte originale, che chi la usa va a verificare.</p>
+
+      <p><strong>Per recensioni ed errori</strong> non c'è scelta di licenza al submit (vedi sezione "Proprietà del contributo" qui sotto per dettagli).</p>
+
+      <p><strong>Codice del sito</strong>: AGPL-3.0 (file <code>LICENSE</code> nel repo GitHub).</p>
+
+      <hr>
+
+      <h3>Proprietà del contributo</h3>
+
+      <p>Tre regimi diversi per le 3 categorie di contributo, perché rispecchiano nature diverse.</p>
+
+      <h4>Skill / prompt — proprietà autoriale</h4>
+
+      <p>Mantieni il diritto d'autore sulla tua skill. Pubblichi con la licenza che scegli al submit (10 valori ammessi, default CC-BY-SA 4.0). Puoi sempre vendere la stessa skill con licenza diversa a clienti specifici (dual-licensing CC). Se il prototipo evolve, le skill restano dei loro autori.</p>
+
+      <h4>Errori dell'AI — proprietà del fatto segnalato, dataset aggregato curato dal maintainer</h4>
+
+      <p>La proprietà del singolo errore segnalato (titolo + descrizione + prompt + risposta errata + correzione) resta tua. La <strong>base dati aggregata</strong> di errori segnalati dal gruppo viene <strong>curata dal maintainer per beneficio collettivo</strong>: aggregata, anonimizzata se necessario, eventualmente analizzata per pattern. Le <strong>politiche di uso future della base dati</strong> (cooperativa dati, donazione a un ente, dataset aperto, ecc.) saranno discusse con i contributori prima di prendere decisioni definitive.</p>
+
+      <p>Questo regime separa l'errore singolo (tuo) dal dataset (collettivo curato), riflettendo la natura del valore: il singolo errore è un fatto, il dataset di errori è un asset di gruppo.</p>
+
+      <h4>Recensioni — licenza ampia non esclusiva al maintainer</h4>
+
+      <p>Pubblicando una recensione, concedi al maintainer del prototipo una <strong>licenza ampia non esclusiva</strong> per usare la tua recensione: citarla, aggregarla, anonimizzarla, riprodurla per finalità di sviluppo del progetto. La proprietà intellettuale del testo originale resta tua.</p>
+
+      <p>Il senso pratico: il maintainer può usare le recensioni per moderazione, statistiche, anti-spam, evoluzione del sito. Tu mantieni il diritto di ripubblicare la tua stessa recensione altrove (es. blog personale, social, archivio professionale).</p>
+
+      <p>Questo regime tiene aperta la porta a evoluzioni future del sito (passaggio a una org, a una cooperativa, a un altro maintainer) senza rendere prigionieri i recensori.</p>
+
+      <h4>Cosa restano in mano al maintainer per finalità tecniche</h4>
+
+      <p>Indipendentemente dai 3 regimi: per finalità tecniche di moderazione, sicurezza, anti-spam, debug, il maintainer ha accesso ai contenuti tramite il database. La privacy page descrive in dettaglio come tratta i dati personali.</p>
 
       <hr>
 
