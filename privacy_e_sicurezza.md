@@ -31,7 +31,7 @@ L'unica cosa che il tuo browser salva localmente *sul tuo dispositivo* è un ide
 Salviamo quello che hai messo nel modulo:
 
 - **Nome** che hai scelto di mostrare. Pubblicato sulla pagina della skill. Non c'è verifica che corrisponda al tuo nome reale.
-- **Email**, *se* l'hai messa (è opzionale). Usata **solo** per spedirti via mail il link "Modifica/cancella" della skill. Non viene pubblicata sul sito, non viene venduta, non viene usata per inviarti altre comunicazioni.
+- **Email**, *se* l'hai messa (è opzionale). Usata **solo** per spedirti via mail il link "Modifica/cancella" della skill. Non viene pubblicata sul sito, non viene venduta, non viene usata per inviarti altre comunicazioni. **Tenuta in chiaro nel database solo per i primi 30 giorni** dopo la pubblicazione; dopo 30 giorni un job automatico (`pg_cron`) la sostituisce con l'etichetta letterale `(pruned-30d)` e non è più recuperabile. Il link "Modifica/cancella" continua comunque a funzionare per 365 giorni (il token UUID che vive nel link è separato dall'email).
 - **Contenuto della skill**: titolo, descrizione, contenuto pieno, area legale, eventuale link GitHub, eventuali riferimenti normativi. Tutto questo è **pubblico** sul sito.
 
 Per le **skill**, una volta pubblicate non si modificano (sono *append-only*). Il link via email non c'è perché non serve.
@@ -40,7 +40,7 @@ Per le **skill**, una volta pubblicate non si modificano (sono *append-only*). I
 
 Stessa cosa:
 
-- **Nome + email opzionale**. Stesso scopo, stesso trattamento. Se metti la mail, ricevi il link permanente "Modifica/cancella" (valido 365 giorni).
+- **Nome + email opzionale**. Stesso scopo, stesso trattamento. Se metti la mail, ricevi il link "Modifica/cancella" valido 365 giorni. L'email è tenuta in chiaro nel database **solo per i primi 30 giorni**: dopo 30 giorni viene sostituita con l'etichetta `(pruned-30d)` (vedi sopra, sezione skill). Il link continua a funzionare per tutti i 365 giorni.
 - **Contenuto** (stelle + testo per le recensioni; prompt + risposta errata + correzione per le segnalazioni di errore).
 - C'è una **checkbox "Pubblica anonima"**: se la spunti, il tuo nome **non viene salvato in database**. Un meccanismo automatico al livello del database (un *trigger* Postgres) intercetta la scrittura e sostituisce il nome con la stringa letterale `(anonimo)` un istante prima che la riga venga creata — quindi sul disco resta solo l'etichetta, mai il tuo nome reale. La pagina pubblica mostra *"Avv. (anonimo)"*. **Non è recuperabile**: se in futuro cambi idea e vuoi rivelarti, devi ri-pubblicare il contributo firmato.
 
@@ -63,7 +63,8 @@ Il modulo apre il **tuo client di posta** già precompilato e mandi tu la mail d
 
 - **Skill pubblicate**: indefinitamente (sono *append-only* per design). Se vuoi cancellarne una che hai pubblicato senza mail, usa il modulo "Richiesta di rimozione" (vedi sotto, sezione "I tuoi diritti").
 - **Recensioni / segnalazioni di errore**: indefinitamente, finché tu non le cancelli col link via email, o finché qualcuno non chiede rimozione.
-- **Link "Modifica/cancella" via email**: 365 giorni dalla pubblicazione, poi scade.
+- **Email associata a un contributo** (se l'hai lasciata): **30 giorni** dalla pubblicazione, poi viene sostituita con l'etichetta letterale `(pruned-30d)` da un job automatico al database (`pg_cron`). Dopo i 30 giorni il maintainer non può più ri-identificare l'autore via email — se hai perso il link "Modifica/cancella", non c'è modo di re-spedirtelo. Tieni il link al sicuro o segna l'URL.
+- **Link "Modifica/cancella" via email**: 365 giorni dalla pubblicazione, poi il token scade. Il link continua a funzionare per tutti i 365 giorni anche dopo il pruning dell'email a 30 giorni (token UUID e email sono campi separati).
 - **Voto "Utile"**: per sempre (è solo `(review_id, fingerprint)` — niente di personale).
 - **Email del maintainer per richieste di rimozione**: quelle che arrivano via mail le conserva il maintainer nel proprio archivio email, secondo le normali regole di conservazione corrispondenza professionale.
 

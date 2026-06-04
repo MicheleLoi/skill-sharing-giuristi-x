@@ -1,0 +1,5 @@
+# SkillAdvisor — prototipo non indicizzato
+# Disabilita crawling per tutti i bot. Rinforzo del meta robots HTML.
+# Sito vivo solo per il gruppo Giuristi AI; non destinato a discovery via search engine.
+User-agent: *
+Disallow: /
