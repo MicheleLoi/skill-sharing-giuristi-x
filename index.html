@@ -599,6 +599,140 @@
     font-style: italic;
   }
 
+  /* ===== Submission mode radio group + license picker + tooltip ===== */
+  .submission-mode-row .radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background: var(--brand-blue-soft);
+    border-left: 3px solid var(--brand-blue);
+    padding: 10px 12px;
+    border-radius: 4px;
+  }
+  .radio-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .radio-option input[type="radio"] {
+    width: auto;
+    margin: 0;
+    flex-shrink: 0;
+    accent-color: var(--brand-blue);
+  }
+  .form-row .hint {
+    display: block;
+    font-size: 11.5px;
+    color: var(--muted);
+    font-style: italic;
+    margin-top: 6px;
+  }
+  .license-row {
+    position: relative;
+  }
+  .license-row label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .license-info-btn {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 1px solid var(--brand-blue);
+    background: var(--brand-blue-soft);
+    color: var(--brand-blue);
+    font-weight: 700;
+    font-size: 11px;
+    font-style: italic;
+    font-family: Georgia, serif;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .license-info-btn:hover {
+    background: var(--brand-blue);
+    color: white;
+  }
+  .license-hint {
+    display: block;
+    font-size: 11.5px;
+    color: var(--muted);
+    font-style: italic;
+    margin-top: 4px;
+  }
+  .license-tooltip {
+    background: var(--cream);
+    border: 1px solid var(--cream-border);
+    border-left: 3px solid var(--brand-blue);
+    padding: 14px 16px;
+    border-radius: 6px;
+    margin: -6px 0 14px 0;
+    font-size: 12.5px;
+  }
+  .license-tooltip h4 {
+    margin: 0 0 10px 0;
+    font-size: 13px;
+    color: var(--brand-blue);
+  }
+  .license-tooltip dl {
+    margin: 0;
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 4px 12px;
+  }
+  .license-tooltip dt {
+    margin: 0;
+    color: var(--ink);
+  }
+  .license-tooltip dd {
+    margin: 0;
+    color: var(--ink);
+    line-height: 1.4;
+  }
+  .license-tooltip-close {
+    margin-top: 12px;
+    background: var(--brand-blue);
+    color: white;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .license-tooltip-close:hover {
+    background: var(--ink);
+  }
+  /* External skill badge sulla card */
+  .external-badge {
+    display: inline-block;
+    background: #eee;
+    color: #555;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 1px 6px;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+  .card-meta .original-author-line {
+    display: block;
+    width: 100%;
+    font-size: 11.5px;
+    color: var(--muted);
+    font-style: italic;
+    margin-top: 2px;
+  }
+
   /* ===== Tabs ===== */
   .tabs {
     display: flex;
@@ -1365,9 +1499,31 @@ when_to_use: Quando attivare questa skill (descrizione del trigger).
     </div>
 
     <form id="shareForm" onsubmit="submitForm(event)">
+      <div class="form-row submission-mode-row">
+        <label>Cosa stai pubblicando</label>
+        <div class="radio-group">
+          <label class="radio-option">
+            <input type="radio" name="submission_mode" value="self" checked onchange="updateShareModalMode()">
+            <span>Una mia skill o prompt</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="submission_mode" value="colleague" onchange="updateShareModalMode()">
+            <span>Skill di un collega del gruppo (che mi ha autorizzato)</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="submission_mode" value="external" onchange="updateShareModalMode()">
+            <span>Skill o prompt visto altrove (non del gruppo)</span>
+          </label>
+        </div>
+        <span class="hint">La modalità "external" è solo per skill/prompt scritti da terzi (es. GitHub esterno, articolo). Non recensisce tool/servizi commerciali — quelli vanno nella tab Errori dell'AI.</span>
+      </div>
       <div class="form-row">
         <label>Il tuo nome</label>
         <input required type="text" name="name" placeholder="Es. Avv. Maria Rossi">
+      </div>
+      <div class="form-row mode-colleague mode-external" hidden>
+        <label id="originalAuthorLabel">Nome dell'autore originale <span class="opt">(chi ha scritto la skill)</span></label>
+        <input type="text" name="original_author_name" placeholder="Es. Avv. Tizio Caio">
       </div>
       <div class="form-row">
         <label>Titolo</label>
@@ -1400,7 +1556,45 @@ when_to_use: Quando attivare questa skill (descrizione del trigger).
       </div>
       <div class="form-row">
         <label>GitHub <span class="opt">(opzionale, se hai un repo)</span></label>
-        <input type="url" name="github" placeholder="https://github.com/…">
+        <input type="url" name="github" id="shareGithub" placeholder="https://github.com/…" onblur="autoFetchGithubLicense(this.value)">
+      </div>
+      <div class="form-row mode-external" hidden>
+        <label>Link alla fonte esterna <span class="opt">(URL dove hai trovato la skill)</span></label>
+        <input type="url" name="tool_url" placeholder="https://…">
+      </div>
+      <div class="form-row license-row mode-self mode-colleague">
+        <label>Licenza <span class="opt">(scegli con cosa pubblichi)</span>
+          <button type="button" class="license-info-btn" aria-label="Spiegazione licenze" onclick="toggleLicenseTooltip()">i</button>
+        </label>
+        <select name="license" id="shareLicense">
+          <option value="CC-BY-SA-4.0">CC-BY-SA 4.0 — condividi con stessa licenza (default)</option>
+          <option value="CC-BY-4.0">CC-BY 4.0 — attribuisci e condividi</option>
+          <option value="CC-BY-NC-4.0">CC-BY-NC 4.0 — non commerciale</option>
+          <option value="CC0-1.0">CC0 — dominio pubblico</option>
+          <option value="Proprietary">Proprietary — tutti i diritti riservati</option>
+          <option value="MIT">MIT</option>
+          <option value="Apache-2.0">Apache 2.0</option>
+          <option value="GPL-3.0">GPL 3.0</option>
+          <option value="AGPL-3.0">AGPL 3.0</option>
+          <option value="TBD">Da definire</option>
+        </select>
+        <span class="license-hint">Mantieni il diritto d'autore. Puoi sempre vendere la tua skill con licenza diversa a clienti specifici (dual-licensing).</span>
+      </div>
+      <div class="license-tooltip" id="licenseTooltip" hidden>
+        <h4>Licenze ammesse</h4>
+        <dl>
+          <dt><strong>CC-BY-SA 4.0</strong></dt><dd>Condividi liberamente, attribuisci, derivati con stessa licenza. <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.it" target="_blank" rel="noopener">Dettagli</a></dd>
+          <dt><strong>CC-BY 4.0</strong></dt><dd>Condividi liberamente, attribuisci. <a href="https://creativecommons.org/licenses/by/4.0/deed.it" target="_blank" rel="noopener">Dettagli</a></dd>
+          <dt><strong>CC-BY-NC 4.0</strong></dt><dd>Solo uso non commerciale. <em>Attenzione</em>: l'uso forense pagato può essere commerciale. <a href="https://creativecommons.org/licenses/by-nc/4.0/deed.it" target="_blank" rel="noopener">Dettagli</a></dd>
+          <dt><strong>CC0 1.0</strong></dt><dd>Dominio pubblico, nessun diritto trattenuto. <a href="https://creativecommons.org/publicdomain/zero/1.0/deed.it" target="_blank" rel="noopener">Dettagli</a></dd>
+          <dt><strong>Proprietary</strong></dt><dd>Tutti i diritti riservati all'autore. Nessun riuso senza permesso.</dd>
+          <dt><strong>MIT</strong></dt><dd>Permissiva (software). Riuso libero con attribuzione. <a href="https://it.wikipedia.org/wiki/Licenza_MIT" target="_blank" rel="noopener">Dettagli</a></dd>
+          <dt><strong>Apache 2.0</strong></dt><dd>Permissiva (software) con clausola brevetti. <a href="https://it.wikipedia.org/wiki/Licenza_Apache" target="_blank" rel="noopener">Dettagli</a></dd>
+          <dt><strong>GPL 3.0</strong></dt><dd>Copyleft software. Derivati condivisi GPL. <a href="https://www.gnu.org/licenses/quick-guide-gplv3.it.html" target="_blank" rel="noopener">Dettagli</a></dd>
+          <dt><strong>AGPL 3.0</strong></dt><dd>Copyleft + network (uso server). <a href="https://www.gnu.org/licenses/why-affero-gpl.it.html" target="_blank" rel="noopener">Dettagli</a></dd>
+          <dt><strong>TBD (da definire)</strong></dt><dd>Non scegli ora. Default reverte a CC-BY-SA finché non specifichi.</dd>
+        </dl>
+        <button type="button" class="license-tooltip-close" onclick="toggleLicenseTooltip()">Chiudi</button>
       </div>
       <div class="form-row">
         <label>Riferimenti normativi <span class="opt">(opzionale)</span></label>
@@ -2435,16 +2629,38 @@ function renderCard(s) {
   const sortedReviews = [...reviews].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
 
   const artifactLabel = s.artifact_type ? (ARTIFACT_TYPE_LABELS[s.artifact_type] || s.artifact_type) : null;
-  const authorHtml = s.anon
-    ? `<span class="review-author anon">Avv. (anonimo)</span>`
-    : `<span>${escapeHtml(s.author)}</span>`;
+  // Display autore differenziato per submission_mode (SID-20260604-152531):
+  // - self (default): autore = author_name (oppure "Avv. (anonimo)" se anon)
+  // - colleague: "{original_author_name} — segnalata da {author_name}"
+  // - external: titolo + badge "Esterno" + "segnalata da {author_name}" (+ autore originale se presente)
+  const submissionMode = s.submission_mode || "self";
+  const originalAuthor = s.original_author_name || null;
+  let authorHtml;
+  let externalBadge = "";
+  let originalAuthorLine = "";
+  const submitter = s.anon ? "Avv. (anonimo)" : (s.author || "—");
+  if (submissionMode === "colleague" && originalAuthor) {
+    authorHtml = `<span>${escapeHtml(originalAuthor)} <span class="review-author" style="font-size:11.5px;color:var(--muted);">— segnalata da ${escapeHtml(submitter)}</span></span>`;
+  } else if (submissionMode === "external") {
+    externalBadge = `<span class="external-badge" title="Skill o prompt visto altrove, non del gruppo">Esterno</span>`;
+    authorHtml = `<span class="review-author" style="font-size:11.5px;color:var(--muted);">segnalata da ${escapeHtml(submitter)}</span>`;
+    if (originalAuthor) {
+      originalAuthorLine = `<span class="original-author-line">autore originale: ${escapeHtml(originalAuthor)}</span>`;
+    }
+  } else {
+    authorHtml = s.anon
+      ? `<span class="review-author anon">Avv. (anonimo)</span>`
+      : `<span>${escapeHtml(s.author || "—")}</span>`;
+  }
   card.innerHTML = `
     <h3>${escapeHtml(s.title)}</h3>
     <div class="card-meta">
       <span class="area-badge">${escapeHtml(s.area)}</span>
       ${artifactLabel ? `<span class="artifact-badge" title="Tipo di artefatto">${escapeHtml(artifactLabel)}</span>` : ''}
+      ${externalBadge}
       ${authorHtml}
       ${hasGh ? '<span class="gh-badge">GitHub</span>' : ''}
+      ${originalAuthorLine}
     </div>
     <div>${renderStarsBlock(s)}</div>
     <p class="card-desc">${escapeHtml(s.desc)}</p>
@@ -2657,6 +2873,103 @@ document.getElementById("search").addEventListener("input", e => {
 function openShareModal() { document.getElementById("modal").classList.add("show"); }
 function closeModal() { document.getElementById("modal").classList.remove("show"); }
 
+// ===== Helpers per submission mode + license (SID-20260604-152531) =====
+
+// Mostra/nasconde le righe del modale in base al submission_mode selezionato.
+// Triggera onchange dai radio button.
+function updateShareModalMode() {
+  const form = document.getElementById("shareForm");
+  if (!form) return;
+  const selected = (form.querySelector('[name="submission_mode"]:checked') || {}).value || "self";
+  form.querySelectorAll(".mode-self").forEach(el => {
+    el.hidden = !(selected === "self");
+  });
+  form.querySelectorAll(".mode-colleague").forEach(el => {
+    // mode-colleague: visibile se "colleague" OR se ha anche mode-self (es. license-row che e' self+colleague)
+    const visibleForColleague = selected === "colleague";
+    const alsoSelf = el.classList.contains("mode-self") && selected === "self";
+    const alsoExternal = el.classList.contains("mode-external") && selected === "external";
+    el.hidden = !(visibleForColleague || alsoSelf || alsoExternal);
+  });
+  form.querySelectorAll(".mode-external").forEach(el => {
+    // Visibile in external; gestita sopra se ha anche mode-colleague.
+    if (!el.classList.contains("mode-colleague")) {
+      el.hidden = !(selected === "external");
+    }
+  });
+  // Aggiorna label "Nome dell'autore originale" — il senso cambia leggermente:
+  // - colleague: l'autore del collega del gruppo
+  // - external: autore terzo non del gruppo
+  const lbl = document.getElementById("originalAuthorLabel");
+  if (lbl) {
+    if (selected === "external") {
+      lbl.innerHTML = 'Nome dell\'autore originale <span class="opt">(autore terzo, non del gruppo)</span>';
+    } else if (selected === "colleague") {
+      lbl.innerHTML = 'Nome dell\'autore originale <span class="opt">(il collega del gruppo che l\'ha scritta)</span>';
+    } else {
+      lbl.innerHTML = 'Nome dell\'autore originale <span class="opt">(chi ha scritto la skill)</span>';
+    }
+  }
+}
+
+function toggleLicenseTooltip() {
+  const tt = document.getElementById("licenseTooltip");
+  if (!tt) return;
+  tt.hidden = !tt.hidden;
+}
+
+// Auto-fetch GitHub license via API: parse owner/repo da URL, fetch /repos/{owner}/{repo}/license,
+// mappa SPDX id -> opzione del select, pre-seleziona.
+// Timeout 3s. Fail silenzioso (rate limit, repo private, URL invalido).
+const GITHUB_SPDX_MAP = {
+  "cc-by-sa-4.0": "CC-BY-SA-4.0",
+  "cc-by-4.0": "CC-BY-4.0",
+  "cc-by-nc-4.0": "CC-BY-NC-4.0",
+  "cc0-1.0": "CC0-1.0",
+  "mit": "MIT",
+  "apache-2.0": "Apache-2.0",
+  "gpl-3.0": "GPL-3.0",
+  "gpl-3.0-only": "GPL-3.0",
+  "gpl-3.0-or-later": "GPL-3.0",
+  "agpl-3.0": "AGPL-3.0",
+  "agpl-3.0-only": "AGPL-3.0",
+  "agpl-3.0-or-later": "AGPL-3.0",
+};
+async function autoFetchGithubLicense(url) {
+  if (!url) return;
+  try {
+    const m = url.match(/^https?:\/\/github\.com\/([^\/\s]+)\/([^\/\s#?]+)/i);
+    if (!m) return;
+    const owner = m[1];
+    const repo = m[2].replace(/\.git$/, "");
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 3000);
+    const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/license`, {
+      headers: { "Accept": "application/vnd.github+json" },
+      signal: ctrl.signal,
+    });
+    clearTimeout(timer);
+    if (!res.ok) return;
+    const data = await res.json();
+    const spdx = (data && data.license && data.license.spdx_id) ? String(data.license.spdx_id).toLowerCase() : null;
+    if (!spdx) return;
+    const mapped = GITHUB_SPDX_MAP[spdx];
+    if (!mapped) return;
+    const sel = document.getElementById("shareLicense");
+    if (!sel) return;
+    sel.value = mapped;
+    const t = document.getElementById("toast");
+    if (t) {
+      t.textContent = "Licenza rilevata da GitHub: " + mapped;
+      t.classList.add("show");
+      setTimeout(() => { t.classList.remove("show"); t.textContent = "Skill pubblicata. Grazie per il contributo."; }, 2500);
+    }
+  } catch (e) {
+    // Silent fail (timeout, network, rate limit, parse).
+    return;
+  }
+}
+
 async function submitForm(e) {
   e.preventDefault();
   const f = e.target;
@@ -2671,9 +2984,20 @@ async function submitForm(e) {
   const artifactTypeEl = f.querySelector('[name="artifact_type"]');
   const artifact_type = (artifactTypeEl && artifactTypeEl.value) || null;
   const anonymous = !!f.querySelector('[name="anonymous"]')?.checked;
+  // Nuovi campi pacchetto rewrite SID-20260604-152531
+  const submission_mode = (f.querySelector('[name="submission_mode"]:checked') || {}).value || "self";
+  // license: solo per modalita' self+colleague (modalita' external non ha campo licenza visibile)
+  const licenseEl = f.querySelector('[name="license"]');
+  const license = (submission_mode === "external") ? "TBD" : ((licenseEl && licenseEl.value) || "CC-BY-SA-4.0");
+  const originalAuthorEl = f.querySelector('[name="original_author_name"]');
+  const original_author_name = (submission_mode === "self") ? null : ((originalAuthorEl && originalAuthorEl.value.trim()) || null);
+  const toolUrlEl = f.querySelector('[name="tool_url"]');
+  const tool_url = (submission_mode === "external") ? ((toolUrlEl && toolUrlEl.value.trim()) || null) : null;
 
   closeModal();
   f.reset();
+  // Reset modal mode visibility to default (self) for next opening
+  updateShareModalMode();
   const t = document.getElementById("toast");
   t.textContent = "Pubblico la skill…";
   t.classList.add("show");
@@ -2694,6 +3018,10 @@ async function submitForm(e) {
         content,
         github_url: github,
         references_text: refs,
+        submission_mode,
+        license,
+        original_author_name,
+        tool_url,
       };
       if (artifact_type) payload.artifact_type = artifact_type;
       const resp = await sbFunction("submit-with-email", {
@@ -2715,6 +3043,10 @@ async function submitForm(e) {
         github: github,
         references: refs,
         artifact_type: artifact_type,
+        submission_mode,
+        license,
+        original_author_name,
+        tool_url,
         reviews: [],
         updated_at: new Date().toISOString().slice(0,10),
         _dbId: resp.id,
@@ -2737,6 +3069,7 @@ async function submitForm(e) {
       anon: anonymous,
       area, desc, content,
       github, references: refs, artifact_type,
+      submission_mode, license, original_author_name, tool_url,
       reviews: [],
       updated_at: new Date().toISOString().slice(0,10),
     });
@@ -3083,6 +3416,13 @@ async function loadFromBackend() {
       github: s.github_url,
       references: s.references_text,
       artifact_type: s.artifact_type || null,
+      // Pacchetto submission_mode + license (SID-20260604-152531).
+      // Fallback defensivo: se la column non esiste ancora (DB pre-migration),
+      // restituisce undefined -> normalizziamo a 'self' / 'CC-BY-SA-4.0'.
+      submission_mode: s.submission_mode || "self",
+      license: s.license || "CC-BY-SA-4.0",
+      original_author_name: s.original_author_name || null,
+      tool_url: s.tool_url || null,
       reviews,
       updated_at: latestReviewDate,
     });
