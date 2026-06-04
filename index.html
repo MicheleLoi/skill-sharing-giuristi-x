@@ -179,6 +179,15 @@
     font-size: 11px;
     font-weight: 600;
   }
+  .artifact-badge {
+    background: #eef0f3;
+    color: #4a5360;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    border: 1px solid #dce0e6;
+  }
   .card-desc {
     color: var(--muted);
     font-size: 13.5px;
@@ -738,14 +747,14 @@
   <header class="hero">
     <div class="hero-text">
       <h1 id="heroTitle">Skill Sharing Giuristi AI</h1>
-      <p id="heroSub">Condividi quello che sai fare con Claude. Senza GitHub. Le tue istruzioni, pronte da copiare e usare.</p>
+      <p id="heroSub">Le istruzioni che dai all'AI per lavorare meglio. Skill, prompt, preferenze — comunque le chiami, condividile coi colleghi.</p>
     </div>
-    <button class="cta-share" id="heroCta" onclick="openShareModal()">Condividi una skill</button>
+    <button class="cta-share" id="heroCta" onclick="openShareModal()">Condividi le tue istruzioni</button>
   </header>
 
   <nav class="tabs" role="tablist">
     <button class="tab" role="tab" aria-selected="true" data-tab="skill" onclick="switchTab('skill')">
-      Skill <span class="tab-count" id="skillCount">10</span>
+      Skill e prompt <span class="tab-count" id="skillCount">10</span>
     </button>
     <button class="tab" role="tab" aria-selected="false" data-tab="errori" onclick="switchTab('errori')">
       Errori dell'AI <span class="tab-count" id="errCount">0</span>
@@ -772,6 +781,10 @@
         <span class="filter-label">Area:</span>
         <!-- pills injected by JS -->
         <button class="pill reset" onclick="resetFilters()">azzera</button>
+      </div>
+      <div class="pills" id="pillsArtifactType" style="margin-top:8px; display:none;">
+        <span class="filter-label">Tipo:</span>
+        <!-- pills injected by JS only if at least one skill has artifact_type set -->
       </div>
     </div>
   </section>
@@ -828,8 +841,8 @@
 <!-- Modal Condividi -->
 <div class="modal-backdrop" id="modal" onclick="if(event.target===this) closeModal()">
   <div class="modal">
-    <h2>Condividi una tua skill</h2>
-    <p class="modal-sub">Pubblicata subito, firmata col tuo nome (o anonima se scegli così). Niente revisione editoriale: il gruppo sa chi sei.</p>
+    <h2>Condividi le tue istruzioni</h2>
+    <p class="modal-sub">Pubblicate subito, firmate col tuo nome. Skill formali, prompt grezzi, frammenti di CLAUDE.md — tutto va bene. Niente revisione editoriale: il gruppo sa chi sei.</p>
     <form id="shareForm" onsubmit="submitForm(event)">
       <div class="form-row">
         <label>Il tuo nome</label>
@@ -840,8 +853,8 @@
         <input type="email" name="email" placeholder="maria.rossi@esempio.it">
       </div>
       <div class="form-row">
-        <label>Titolo della skill</label>
-        <input required type="text" name="title" placeholder="Es. Bozza ricorso TAR — vizi atto amministrativo">
+        <label>Titolo</label>
+        <input required type="text" name="title" placeholder="Es. Lettera di messa in mora — schema studio Rossi">
       </div>
       <div class="form-row">
         <label>Area legale</label>
@@ -861,12 +874,12 @@
         </select>
       </div>
       <div class="form-row">
-        <label>Cosa fa la skill <span class="opt">(2-3 righe, scritte per un collega)</span></label>
-        <textarea required name="desc" placeholder="Spiega in parole semplici cosa ottiene chi la usa."></textarea>
+        <label>Cosa fanno queste istruzioni <span class="opt">(2-3 righe, scritte per un collega)</span></label>
+        <textarea required name="desc" placeholder="Spiega in parole semplici cosa ottiene chi le usa."></textarea>
       </div>
       <div class="form-row">
-        <label>Contenuto della skill <span class="opt">(le istruzioni che dai a Claude)</span></label>
-        <textarea required class="large" name="content" placeholder="Incolla qui le istruzioni che dai a Claude. Puoi usare il formato che preferisci."></textarea>
+        <label>Le istruzioni che dai all'AI <span class="opt">(prompt grezzo, SKILL.md, frammento di CLAUDE.md — qualsiasi formato va bene)</span></label>
+        <textarea required class="large" name="content" placeholder="Incolla qui il testo. Niente formato obbligatorio."></textarea>
       </div>
       <div class="form-row">
         <label>GitHub <span class="opt">(opzionale, se hai un repo)</span></label>
@@ -875,6 +888,17 @@
       <div class="form-row">
         <label>Riferimenti normativi <span class="opt">(opzionale)</span></label>
         <textarea name="refs" placeholder="Es. Art. 67 TUIR, Cass. n. 12345/2025…"></textarea>
+      </div>
+      <div class="form-row">
+        <label>Tipo di artefatto <span class="opt">(opzionale — aiuta i colleghi a capire cos'è)</span></label>
+        <select name="artifact_type">
+          <option value="">— non specifico —</option>
+          <option value="prompt-libero">Prompt libero (testo grezzo)</option>
+          <option value="skill-md">SKILL.md formale (frontmatter + body, plugin Claude Code)</option>
+          <option value="claude-md">Frammento di CLAUDE.md (project-level instructions)</option>
+          <option value="orchestrazione-mcp">Orchestrazione MCP / agente browser</option>
+          <option value="altro">Altro</option>
+        </select>
       </div>
       <div class="modal-actions">
         <button type="button" class="btn-secondary" onclick="closeModal()">Annulla</button>
@@ -1648,10 +1672,22 @@ const ERRORS = [
 ];
 
 // ===== AI tools tassonomia =====
+// ===== Artifact type tassonomia (facet opzionale post-2026-06-04) =====
+// Vedi MHC-Work/_org/decision_log.md 2026-06-04 §"Skill Sharing Giuristi AI"
+// + notes/research/product-strategy/dati_whatsapp_gruppo_avvocati_20260529.md
+// (vocabolario fluido skill/prompt/instructions/claude.md).
+const ARTIFACT_TYPE_LABELS = {
+  "prompt-libero": "prompt libero",
+  "skill-md": "SKILL.md",
+  "claude-md": "CLAUDE.md",
+  "orchestrazione-mcp": "orchestrazione MCP",
+  "altro": "altro",
+};
 // ===== State =====
 const state = {
   search: "",
   activeAreas: new Set(AREE),
+  activeArtifactTypes: null, // null = nessun filtro attivo (mostra tutto); Set = filtra
   sort: "reviewed",
   helpfulVoted: new Set(),
   tab: "skill",
@@ -1682,11 +1718,64 @@ function renderPills() {
   });
 }
 
+// Render pill per "Tipo di artefatto" — solo i tipi effettivamente presenti
+// nelle skill caricate compaiono come pill. Se nessuna skill ha artifact_type
+// taggato, il blocco resta nascosto. Toggle multi-select; null = nessun
+// filtro = mostra tutto.
+function renderArtifactTypePills() {
+  const wrap = document.getElementById("pillsArtifactType");
+  if (!wrap) return;
+  // Tipi presenti nelle skill caricate
+  const presentTypes = new Set();
+  SKILLS.forEach(s => { if (s.artifact_type) presentTypes.add(s.artifact_type); });
+  if (presentTypes.size === 0) {
+    wrap.style.display = "none";
+    return;
+  }
+  wrap.style.display = "";
+  // Pulisci pill esistenti (mantieni label "Tipo:")
+  wrap.querySelectorAll(".pill").forEach(p => p.remove());
+  // Ordine canonico (5 valori del select + qualsiasi extra alla fine)
+  const canonOrder = ["prompt-libero","skill-md","claude-md","orchestrazione-mcp","altro"];
+  const sortedTypes = [...presentTypes].sort((a,b) => {
+    const ia = canonOrder.indexOf(a), ib = canonOrder.indexOf(b);
+    if (ia === -1 && ib === -1) return a.localeCompare(b);
+    if (ia === -1) return 1;
+    if (ib === -1) return -1;
+    return ia - ib;
+  });
+  sortedTypes.forEach(t => {
+    const b = document.createElement("button");
+    b.className = "pill";
+    b.textContent = ARTIFACT_TYPE_LABELS[t] || t;
+    const active = state.activeArtifactTypes === null || state.activeArtifactTypes.has(t);
+    b.setAttribute("aria-pressed", active ? "true" : "false");
+    b.onclick = () => {
+      // Toggle: se null, materializza Set con tutti tranne quello (deseleziona quello).
+      if (state.activeArtifactTypes === null) {
+        state.activeArtifactTypes = new Set(sortedTypes);
+        state.activeArtifactTypes.delete(t);
+      } else if (state.activeArtifactTypes.has(t)) {
+        state.activeArtifactTypes.delete(t);
+        // Se vuoto → torna a null (= mostra tutto)
+        if (state.activeArtifactTypes.size === 0) state.activeArtifactTypes = null;
+      } else {
+        state.activeArtifactTypes.add(t);
+      }
+      renderArtifactTypePills();
+      renderGrid();
+    };
+    wrap.appendChild(b);
+  });
+}
+
 function resetFilters() {
   state.search = "";
   document.getElementById("search").value = "";
   state.activeAreas = new Set(AREE);
+  state.activeArtifactTypes = null;
   renderPills();
+  renderArtifactTypePills();
   renderGrid();
 }
 
@@ -1751,6 +1840,11 @@ function renderGrid() {
   const q = state.search.trim().toLowerCase();
   const matches = SKILLS.filter(s => {
     if (!state.activeAreas.has(s.area)) return false;
+    // Filtro artifact_type: null = nessun filtro (mostra tutto, incluse skill senza tag);
+    // Set = mostra solo quelle taggate con un tipo nel set (le untagged escono).
+    if (state.activeArtifactTypes !== null) {
+      if (!s.artifact_type || !state.activeArtifactTypes.has(s.artifact_type)) return false;
+    }
     if (!q) return true;
     const blob = (s.title + " " + s.author + " " + s.desc + " " + s.area).toLowerCase();
     return blob.includes(q);
@@ -1809,10 +1903,12 @@ function renderCard(s) {
   // sort reviews most recent first for display
   const sortedReviews = [...reviews].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
 
+  const artifactLabel = s.artifact_type ? (ARTIFACT_TYPE_LABELS[s.artifact_type] || s.artifact_type) : null;
   card.innerHTML = `
     <h3>${escapeHtml(s.title)}</h3>
     <div class="card-meta">
       <span class="area-badge">${escapeHtml(s.area)}</span>
+      ${artifactLabel ? `<span class="artifact-badge" title="Tipo di artefatto">${escapeHtml(artifactLabel)}</span>` : ''}
       <span>${escapeHtml(s.author)}</span>
       ${hasGh ? '<span class="gh-badge">GitHub</span>' : ''}
     </div>
@@ -1824,7 +1920,7 @@ function renderCard(s) {
         <p class="detail-desc">${escapeHtml(s.desc)}</p>
       </div>
       <div class="detail-section">
-        <div class="detail-label">Contenuto della skill</div>
+        <div class="detail-label">Contenuto</div>
         <pre class="skill-content">${escapeHtml(s.content)}</pre>
       </div>
       ${s.references ? `<div class="detail-section">
@@ -2038,6 +2134,8 @@ async function submitForm(e) {
   const content = f.querySelector('[name="content"]').value.trim();
   const github = f.querySelector('[name="github"]').value.trim() || null;
   const refs = f.querySelector('[name="refs"]').value.trim() || null;
+  const artifactTypeEl = f.querySelector('[name="artifact_type"]');
+  const artifact_type = (artifactTypeEl && artifactTypeEl.value) || null;
 
   closeModal();
   f.reset();
@@ -2060,6 +2158,7 @@ async function submitForm(e) {
           content,
           github_url: github,
           references_text: refs,
+          artifact_type: artifact_type,
         },
       });
       // Aggiungi alla lista locale per immediato feedback
@@ -2069,11 +2168,13 @@ async function submitForm(e) {
         desc, content,
         github: github,
         references: refs,
+        artifact_type: artifact_type,
         reviews: [],
         updated_at: new Date().toISOString().slice(0,10),
         _dbId: resp.id,
       };
       SKILLS.push(newSkill);
+      renderArtifactTypePills();
       renderGrid();
     } catch (err) {
       console.error(err);
@@ -2086,9 +2187,11 @@ async function submitForm(e) {
     SKILLS.push({
       id: "mock-" + Math.random().toString(36).slice(2,8),
       title, author, area, desc, content,
-      github, references: refs, reviews: [],
+      github, references: refs, artifact_type,
+      reviews: [],
       updated_at: new Date().toISOString().slice(0,10),
     });
+    renderArtifactTypePills();
     renderGrid();
   }
 
@@ -2111,8 +2214,8 @@ function switchTab(tab) {
   const cta = document.getElementById("heroCta");
   if (tab === "skill") {
     title.textContent = "Skill Sharing Giuristi AI";
-    sub.textContent = "Condividi quello che sai fare con Claude. Senza GitHub. Le tue istruzioni, pronte da copiare e usare.";
-    cta.textContent = "Condividi una skill";
+    sub.textContent = "Le istruzioni che dai all'AI per lavorare meglio. Skill, prompt, preferenze — comunque le chiami, condividile coi colleghi.";
+    cta.textContent = "Condividi le tue istruzioni";
     cta.onclick = openShareModal;
   } else {
     title.textContent = "Errori dell'AI nei contesti legali italiani";
@@ -2419,6 +2522,7 @@ async function loadFromBackend() {
       content: s.content,
       github: s.github_url,
       references: s.references_text,
+      artifact_type: s.artifact_type || null,
       reviews,
       updated_at: latestReviewDate,
     });
@@ -2457,6 +2561,7 @@ async function bootstrap() {
     seedReviews();
   }
   renderPills();
+  renderArtifactTypePills();
   renderGrid();
   renderErrPills();
   renderErrGrid();
