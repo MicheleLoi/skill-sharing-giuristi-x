@@ -57,7 +57,7 @@ In alto a destra, bottone azzurro.
 
 | Campo | Cosa scrivere |
 |---|---|
-| **Il tuo nome** | Es. *Avv. Maria Rossi*. Va pubblicato (vedi anonimato sotto). |
+| **Il tuo nome** | Es. *Avv. Maria Rossi*. Per default va pubblicato; se vuoi puoi spuntare *"Pubblica anonima"* (vedi sotto). |
 | **Email** *(opzionale)* | Se la metti, riceverai un **link permanente per modificare o cancellare il contributo** via email. Se non la metti, il contributo è append-only e non può essere modificato. NB: l'email **non viene mostrata pubblicamente**. |
 | **Titolo** | Una riga descrittiva. Es. *"Bozza ricorso TAR — vizi atto"*. |
 | **Area legale** | Scegli dal menu: civile / penale / lavoro / amministrativo / commerciale / privacy / societario / tributario / contenzioso / ip / generale. |
@@ -66,16 +66,17 @@ In alto a destra, bottone azzurro.
 | **GitHub** *(opzionale)* | Link al repo se la skill vive su GitHub. Altrimenti lascia vuoto. |
 | **Riferimenti normativi** *(opzionale)* | Articoli, leggi, sentenze da consultare. |
 | **Tipo di artefatto** *(opzionale)* | Aiuta i colleghi a capire cos'è quello che stai condividendo. Cinque valori — vedi sezione "Tipo di artefatto" sotto. Se non sai quale scegliere, lascia "non specifico" — va benissimo. |
+| **Pubblica anonima** | Casella spuntabile. Se la spunti, la skill comparirà come *"Avv. (anonimo)"* e il tuo nome non viene salvato. Vedi anonimato sotto. |
 
 ### Passo 3 — Click "Pubblica"
 
 Il contributo va live subito. Reload pagina e lo vedi in cima alla griglia. Se hai messo l'email, ricevi una mail con il link "Modifica/cancella" (validità: 365 giorni).
 
-### Anonimato
+### Anonimato opt-in
 
-Per la pubblicazione di una skill o di un prompt non c'è opzione anonima — il contributo resta autoriale per dare credito a chi l'ha costruito. Se non vuoi metterci il tuo nome, **non pubblicarlo**.
+Per skill, recensioni e segnalazioni di errore esiste la checkbox **"Pubblica anonima"**. Se la spunti, il tuo nome **non viene salvato in database** (un trigger Postgres lo sostituisce con la stringa letterale `(anonimo)` un istante prima della scrittura). La pagina mostra *"Avv. (anonimo)"* per le skill e *"Avvocato (anonimo)"* per recensioni ed errori.
 
-Le **recensioni** e le **segnalazioni di errori**, invece, possono essere anonime opt-in (vedi sotto).
+Le skill firmate hanno più peso di trust per chi le legge — il consiglio è di firmare normalmente, e scegliere anonima solo se hai una **ragione concreta** (es. condividi uno schema su tema sensibile, una skill sviluppata con un partner di studio, un caso commercialmente delicato).
 
 ---
 

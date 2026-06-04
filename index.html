@@ -1428,6 +1428,13 @@ when_to_use: Quando attivare questa skill (descrizione del trigger).
           <option value="altro">Altro</option>
         </select>
       </div>
+      <div class="form-row anon-row">
+        <input type="checkbox" id="shareAnon" name="anonymous">
+        <label for="shareAnon">
+          Pubblica la skill anonima
+          <span class="anon-note">Il tuo nome non appare pubblicamente — la skill comparirà come "Avv. (anonimo)". Le skill firmate hanno più peso di trust; usa anonima solo con una ragione concreta (es. tema sensibile, partner di studio, caso commercialmente delicato).</span>
+        </label>
+      </div>
       <div class="modal-actions">
         <button type="button" class="btn-secondary" onclick="closeModal()">Annulla</button>
         <button type="submit" class="btn-primary">Pubblica</button>
@@ -2439,12 +2446,15 @@ function renderCard(s) {
   const sortedReviews = [...reviews].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
 
   const artifactLabel = s.artifact_type ? (ARTIFACT_TYPE_LABELS[s.artifact_type] || s.artifact_type) : null;
+  const authorHtml = s.anon
+    ? `<span class="review-author anon">Avv. (anonimo)</span>`
+    : `<span>${escapeHtml(s.author)}</span>`;
   card.innerHTML = `
     <h3>${escapeHtml(s.title)}</h3>
     <div class="card-meta">
       <span class="area-badge">${escapeHtml(s.area)}</span>
       ${artifactLabel ? `<span class="artifact-badge" title="Tipo di artefatto">${escapeHtml(artifactLabel)}</span>` : ''}
-      <span>${escapeHtml(s.author)}</span>
+      ${authorHtml}
       ${hasGh ? '<span class="gh-badge">GitHub</span>' : ''}
     </div>
     <div>${renderStarsBlock(s)}</div>
@@ -2671,6 +2681,7 @@ async function submitForm(e) {
   const refs = f.querySelector('[name="refs"]').value.trim() || null;
   const artifactTypeEl = f.querySelector('[name="artifact_type"]');
   const artifact_type = (artifactTypeEl && artifactTypeEl.value) || null;
+  const anonymous = !!f.querySelector('[name="anonymous"]')?.checked;
 
   closeModal();
   f.reset();
@@ -2687,7 +2698,7 @@ async function submitForm(e) {
       const payload = {
         title,
         author_name: author,
-        anonymous: false,
+        anonymous,
         area,
         ai_compatibility: ["Claude"],
         description: desc,
@@ -2701,10 +2712,16 @@ async function submitForm(e) {
         email: email,
         payload: payload,
       });
-      // Aggiungi alla lista locale per immediato feedback
+      // Aggiungi alla lista locale per immediato feedback. Se anonima, il
+      // trigger Postgres enforce_anonymous_no_name ha sostituito author_name
+      // con "(anonimo)" prima della INSERT — replichiamo il display side
+      // qui usando il flag anon per renderizzare "Avv. (anonimo)" coerente.
       const newSkill = {
         id: title.toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,40) + "-" + resp.id.slice(0,6),
-        title, author, area,
+        title,
+        author: anonymous ? '(anonimo)' : author,
+        anon: anonymous,
+        area,
         desc, content,
         github: github,
         references: refs,
@@ -2726,7 +2743,10 @@ async function submitForm(e) {
     // Mock: aggiungi solo localmente
     SKILLS.push({
       id: "mock-" + Math.random().toString(36).slice(2,8),
-      title, author, area, desc, content,
+      title,
+      author: anonymous ? '(anonimo)' : author,
+      anon: anonymous,
+      area, desc, content,
       github, references: refs, artifact_type,
       reviews: [],
       updated_at: new Date().toISOString().slice(0,10),
@@ -3064,7 +3084,10 @@ async function loadFromBackend() {
       id: s.slug,
       _dbId: s.id,
       title: s.title,
+      // Se anonima, il trigger DB ha sostituito author_name con "(anonimo)";
+      // teniamo s.author_name come fonte di verità + anon flag per render styling.
       author: s.author_name,
+      anon: !!s.anonymous,
       area: s.area,
       desc: s.description,
       content: s.content,
