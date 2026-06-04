@@ -42,7 +42,37 @@ interface SkillPayload {
   content: string;
   github_url?: string | null;
   references_text?: string | null;
+  // Pacchetto submission_mode + license (SID-20260604-152531, ratificato post-strategist).
+  submission_mode?: "self" | "colleague" | "external";
+  license?:
+    | "CC-BY-SA-4.0"
+    | "CC-BY-4.0"
+    | "CC-BY-NC-4.0"
+    | "CC0-1.0"
+    | "Proprietary"
+    | "MIT"
+    | "Apache-2.0"
+    | "GPL-3.0"
+    | "AGPL-3.0"
+    | "TBD";
+  original_author_name?: string | null;
+  tool_url?: string | null;
+  artifact_type?: string | null;
 }
+
+const ALLOWED_SUBMISSION_MODES = new Set(["self", "colleague", "external"]);
+const ALLOWED_LICENSES = new Set([
+  "CC-BY-SA-4.0",
+  "CC-BY-4.0",
+  "CC-BY-NC-4.0",
+  "CC0-1.0",
+  "Proprietary",
+  "MIT",
+  "Apache-2.0",
+  "GPL-3.0",
+  "AGPL-3.0",
+  "TBD",
+]);
 
 interface ReviewPayload {
   skill_id: string;
@@ -188,6 +218,31 @@ Deno.serve(async (req: Request) => {
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/^-|-$/g, "")
       .substring(0, 80) + "-" + Math.random().toString(36).slice(2, 8);
+  }
+
+  // Validation + sanitization dei nuovi campi skill (SID-20260604-152531).
+  // submission_mode + license sono enum vincolati anche a livello DB (CHECK constraint).
+  // Lato edge facciamo early reject per messaggi di errore piu' chiari al client.
+  if (body.kind === "skill") {
+    if (payload.submission_mode !== undefined && payload.submission_mode !== null) {
+      if (!ALLOWED_SUBMISSION_MODES.has(String(payload.submission_mode))) {
+        return jsonResponse(
+          { error: `submission_mode invalid: ${payload.submission_mode}` },
+          400,
+        );
+      }
+    }
+    if (payload.license !== undefined && payload.license !== null) {
+      if (!ALLOWED_LICENSES.has(String(payload.license))) {
+        return jsonResponse(
+          { error: `license invalid: ${payload.license}` },
+          400,
+        );
+      }
+    }
+    // Normalizza optional fields a null se stringhe vuote.
+    if (payload.original_author_name === "") payload.original_author_name = null;
+    if (payload.tool_url === "") payload.tool_url = null;
   }
 
   const { data: inserted, error: insertErr } = await supabase
