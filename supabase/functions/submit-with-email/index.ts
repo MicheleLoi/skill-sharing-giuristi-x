@@ -94,10 +94,10 @@ async function sendEditEmail(args: {
 }): Promise<void> {
   const kindLabel = args.kind === "review" ? "recensione" : "segnalazione errore";
   const link = `${SITE_URL}/edit.html?token=${args.token}`;
-  const subject = `Modifica/cancella la tua ${kindLabel} — Skill Sharing Giuristi AI`;
+  const subject = `Modifica/cancella la tua ${kindLabel} — SkillAdvisor`;
   const text = `Ciao,
 
-hai appena pubblicato una ${kindLabel} su Skill Sharing Giuristi AI.
+hai appena pubblicato una ${kindLabel} su SkillAdvisor.
 
 Se in futuro vuoi modificare o cancellare il tuo contributo, usa questo link permanente:
 
@@ -108,16 +108,16 @@ Conservalo — è l'unico modo per editare il tuo contributo senza dover passare
 Il link non scade per 365 giorni.
 
 —
-Skill Sharing Giuristi AI (prototipo, ospitato come regalo al gruppo Giuristi AI)
+SkillAdvisor (prototipo, ospitato come regalo al gruppo Giuristi AI)
 `;
   const html = `<p>Ciao,</p>
-<p>hai appena pubblicato una ${kindLabel} su Skill Sharing Giuristi AI.</p>
+<p>hai appena pubblicato una ${kindLabel} su SkillAdvisor.</p>
 <p>Se in futuro vuoi modificare o cancellare il tuo contributo, usa questo link permanente:</p>
 <p><a href="${link}">${link}</a></p>
 <p>Conservalo — è l'unico modo per editare il tuo contributo senza dover passare dal maintainer del sito.</p>
 <p>Il link non scade per 365 giorni.</p>
 <hr>
-<p style="color:#888;font-size:12px;">Skill Sharing Giuristi AI (prototipo, ospitato come regalo al gruppo Giuristi AI)</p>`;
+<p style="color:#888;font-size:12px;">SkillAdvisor (prototipo, ospitato come regalo al gruppo Giuristi AI)</p>`;
 
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
@@ -126,7 +126,7 @@ Skill Sharing Giuristi AI (prototipo, ospitato come regalo al gruppo Giuristi AI
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: "Skill Sharing Giuristi AI <onboarding@resend.dev>",
+      from: "SkillAdvisor <onboarding@resend.dev>",
       to: [args.to],
       subject,
       text,

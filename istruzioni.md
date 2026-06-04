@@ -1,4 +1,4 @@
-# Istruzioni — Skill Sharing Giuristi AI (prototipo)
+# Istruzioni — SkillAdvisor (prototipo)
 
 > Questa è una guida per chi visita il prototipo. Spiega cosa puoi fare, come pubblicare una skill o un prompt e segnalare un errore, e cosa **non** aspettarti.
 

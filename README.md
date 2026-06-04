@@ -1,4 +1,4 @@
-# Skill Sharing Giuristi AI — prototipo
+# SkillAdvisor — prototipo
 
 Prototipo di piattaforma dove **giuristi italiani** possono condividere skill (istruzioni pronte per Claude, ChatGPT e altri LLM su task ricorrenti) e segnalare errori dell'AI nei contesti legali italiani.
 
