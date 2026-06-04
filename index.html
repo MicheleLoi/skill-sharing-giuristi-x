@@ -723,6 +723,106 @@
   }
   .err-section p { margin: 0; font-size: 13px; color: var(--ink); line-height: 1.5; }
 
+  /* ===== Instructions (tab Istruzioni) ===== */
+  .instructions-article {
+    max-width: 760px;
+    margin: 8px auto 60px;
+    padding: 0 4px;
+    line-height: 1.65;
+    color: var(--ink);
+    font-size: 14.5px;
+  }
+  .instructions-article h2 {
+    font-size: 22px;
+    font-weight: 600;
+    margin: 0 0 12px;
+    letter-spacing: -0.01em;
+  }
+  .instructions-article h3 {
+    font-size: 17px;
+    font-weight: 600;
+    margin: 36px 0 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--cream-border);
+  }
+  .instructions-article h4 {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 22px 0 8px;
+    color: var(--ink);
+  }
+  .instructions-article p { margin: 10px 0; }
+  .instructions-article ul, .instructions-article ol { margin: 10px 0; padding-left: 24px; }
+  .instructions-article li { margin: 4px 0; }
+  .instructions-article blockquote {
+    margin: 14px 0;
+    padding: 12px 16px;
+    background: var(--brand-blue-soft);
+    border-left: 3px solid var(--brand-blue);
+    border-radius: 4px;
+    color: var(--ink);
+  }
+  .instructions-article blockquote.meta-note {
+    background: var(--warn-soft);
+    border-left-color: var(--warn);
+    font-size: 13px;
+  }
+  .instructions-article blockquote p { margin: 4px 0; }
+  .instructions-article code {
+    background: var(--cream);
+    border: 1px solid var(--cream-border);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.9em;
+  }
+  .instructions-article pre {
+    background: #1b2230;
+    color: #f0f0f0;
+    padding: 14px 16px;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-size: 12.5px;
+    line-height: 1.55;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    margin: 14px 0;
+  }
+  .instructions-article pre code {
+    background: transparent;
+    border: 0;
+    padding: 0;
+    color: inherit;
+    font-size: inherit;
+  }
+  .instructions-article table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 13.5px;
+  }
+  .instructions-article th, .instructions-article td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--rule);
+    text-align: left;
+    vertical-align: top;
+  }
+  .instructions-article th {
+    background: var(--cream);
+    font-weight: 600;
+    border-bottom: 2px solid var(--rule);
+  }
+  .instructions-article a {
+    color: var(--brand-blue);
+    text-decoration: underline;
+  }
+  .instructions-article hr {
+    border: 0;
+    border-top: 1px solid var(--cream-border);
+    margin: 32px 0;
+  }
+  .instructions-article em { font-style: italic; }
+  .instructions-article strong { font-weight: 600; }
+
   /* ===== Footer ===== */
   .foot {
     margin-top: 40px;
@@ -758,6 +858,9 @@
     </button>
     <button class="tab" role="tab" aria-selected="false" data-tab="errori" onclick="switchTab('errori')">
       Errori dell'AI <span class="tab-count" id="errCount">0</span>
+    </button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="istruzioni" onclick="switchTab('istruzioni')">
+      Istruzioni
     </button>
   </nav>
 
@@ -829,6 +932,423 @@
     <section class="grid" id="errGrid"></section>
 
   </div><!-- /view-errori -->
+
+  <!-- ============ VIEW ISTRUZIONI ============ -->
+  <div class="view view-istruzioni" id="viewIstruzioni">
+    <article class="instructions-article">
+
+      <h2>Istruzioni — SkillAdvisor (prototipo)</h2>
+
+      <blockquote>
+        <p>Questa è una guida per chi visita il prototipo. Spiega cosa puoi fare, come pubblicare una skill o un prompt e segnalare un errore, e cosa <strong>non</strong> aspettarti.</p>
+      </blockquote>
+
+      <blockquote class="meta-note">
+        <p><strong>Per chi modifica questo file:</strong> <code>istruzioni.md</code> è la <strong>fonte autoritativa</strong>; la tab "Istruzioni" sul sito (<code>index.html</code> → <code>&lt;section id="viewIstruzioni"&gt;</code>) è un HTML fragment <strong>derivato manualmente</strong> da questo MD. <strong>Niente automatismo</strong>: dopo aver modificato <code>istruzioni.md</code>, chiedi a un sub-agent (o rifai a mano) la rigenerazione del fragment HTML nella section <code>viewIstruzioni</code> di <code>index.html</code>, poi commit + push entrambi i file insieme. Decisione SID-20260604-152531.</p>
+      </blockquote>
+
+      <hr>
+
+      <h3>Cos'è questo sito</h3>
+
+      <p>Un posto dove giuristi italiani <strong>condividono fra loro</strong> istruzioni pronte per gli LLM (Claude, ChatGPT, Copilot, Gemini…) su task legali ricorrenti, e dove <strong>segnalano errori</strong> dell'AI in contesti giuridici italiani.</p>
+
+      <p>Due tab in alto:</p>
+
+      <ul>
+        <li><strong>Skill e prompt</strong> — istruzioni pronte che funzionano per un certo task (es. <em>"Bozza ricorso TAR"</em>, <em>"Check DPA art. 28 GDPR"</em>, <em>"Riassunto sentenza Cassazione in 5 punti"</em>). Possono essere SKILL.md formali (frontmatter + body), prompt grezzi salvati in un file di testo, frammenti di CLAUDE.md, orchestrazioni MCP. La community usa questi termini in modo intercambiabile — il sito li tratta tutti come "istruzioni che dai all'AI". Le altre persone le copiano e le usano col loro AI.</li>
+        <li><strong>Errori dell'AI</strong> — casi reali in cui un LLM ha sbagliato in modo educativo per i colleghi: prompt che hai dato, risposta errata dell'AI, cosa era corretto.</li>
+      </ul>
+
+      <hr>
+
+      <h3>Cosa <strong>non</strong> è</h3>
+
+      <ul>
+        <li><strong>Non è consulenza legale.</strong> Le skill e i prompt sono strumenti che l'avvocato decide di usare a propria responsabilità. La piattaforma non si fa carico dell'esito.</li>
+        <li><strong>Non sostituisce verifica delle fonti.</strong> Le istruzioni stesse possono marcare <code>[VERIFICA]</code> i punti delicati. L'avvocato controlla i riferimenti normativi prima di usarli in atto.</li>
+        <li><strong>Non è un marketplace commerciale.</strong> Non si paga per pubblicare, non si paga per leggere, non si compra niente. I contributi sono della comunità a beneficio della comunità.</li>
+        <li><strong>Non è un posto per recensire tool o servizi commerciali interi.</strong> Quello che si pubblica nella tab <em>Skill e prompt</em> sono <strong>istruzioni testuali</strong> che dai a un'AI: prompt grezzi, SKILL.md, frammenti di CLAUDE.md, orchestrazioni MCP. Lexroom, BuddaLaw, One Legale, Top24, libra, 4c.ai, Manus, Calpurnio e simili sono <strong>programmi interi</strong>, non skill — non vanno qui. Se hai osservato un loro errore fattuale su un caso concreto, c'è la tab <em>Errori dell'AI</em> (vedi sotto, con la regola "descrivi cosa è successo, non valutare il prodotto").</li>
+        <li><strong>Non c'è moderazione preventiva.</strong> Quello che pubblichi va live subito, senza che nessuno controlli prima. La qualità la giudica la community con stelle, recensioni e segnalazioni.</li>
+      </ul>
+
+      <hr>
+
+      <h3>Come navigare</h3>
+
+      <h4>Tab Skill e prompt</h4>
+
+      <ul>
+        <li>Ogni scheda mostra: titolo, autore, area legale (pill verde), eventuale badge "Tipo di artefatto" (se chi ha pubblicato l'ha categorizzato — vedi sotto), descrizione breve, stelle medie + conteggio recensioni</li>
+        <li>Filtri in toolbar: ricerca testuale (titolo, autore, argomento) + filtri per area + filtro "Tipo:" (visibile solo se almeno un contributo è stato taggato)</li>
+        <li>Ordinamento: <em>Più recensite</em> (default) / <em>Meglio valutate</em> / <em>Più recenti</em></li>
+        <li>Click <strong>"Apri"</strong> su una scheda per leggere il contenuto completo, le recensioni, copiare le istruzioni</li>
+      </ul>
+
+      <h4>Tab Errori dell'AI</h4>
+
+      <ul>
+        <li>Banner giallo in cima ti ricorda di <strong>anonimizzare il caso prima di condividere</strong> un errore (link a <a href="https://recode.micheleloi.pro" target="_blank" rel="noopener">Recode IT</a> per pseudonimizzare)</li>
+        <li>Ogni scheda mostra: titolo, AI tool (badge blu, es. Claude / ChatGPT / Gemini), area legale, descrizione, segnalazioni</li>
+        <li>Filtri: ricerca testuale + filtri per area + filtri per AI</li>
+        <li>Click <strong>"Apri"</strong> per vedere: contesto, prompt che hai dato all'AI, risposta errata, cosa era corretto (con riferimenti)</li>
+      </ul>
+
+      <hr>
+
+      <h3>Come pubblicare una skill o un prompt</h3>
+
+      <p><strong>Prerequisiti</strong>: devi essere un avvocato (o praticante / docente / magistrato / notaio) del gruppo Giuristi AI. Niente login, niente account — si parte dal fatto che tu sei già nel cerchio.</p>
+
+      <h4>Passo 1 — Click "Condividi le tue istruzioni"</h4>
+
+      <p>In alto a destra, bottone azzurro.</p>
+
+      <h4>Passo 2 — Compila i campi del modale</h4>
+
+      <table>
+        <thead>
+          <tr><th>Campo</th><th>Cosa scrivere</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Il tuo nome</strong></td><td>Es. <em>Avv. Maria Rossi</em>. Va pubblicato (vedi anonimato sotto).</td></tr>
+          <tr><td><strong>Email</strong> <em>(opzionale)</em></td><td>Se la metti, riceverai un <strong>link permanente per modificare o cancellare il contributo</strong> via email. Se non la metti, il contributo è append-only e non può essere modificato. NB: l'email <strong>non viene mostrata pubblicamente</strong>.</td></tr>
+          <tr><td><strong>Titolo</strong></td><td>Una riga descrittiva. Es. <em>"Bozza ricorso TAR — vizi atto"</em>.</td></tr>
+          <tr><td><strong>Area legale</strong></td><td>Scegli dal menu: civile / penale / lavoro / amministrativo / commerciale / privacy / societario / tributario / contenzioso / ip / generale.</td></tr>
+          <tr><td><strong>Cosa fanno queste istruzioni</strong></td><td>2-3 righe per un collega: cosa ottiene chi le usa.</td></tr>
+          <tr><td><strong>Le istruzioni che dai all'AI</strong></td><td>Il testo vero e proprio da dare all'AI. Puoi usare un prompt grezzo, formato Markdown, frontmatter SKILL.md (<code>name / description / when_to_use</code> + body), frammento di CLAUDE.md, o altro. Vedi esempi sotto.</td></tr>
+          <tr><td><strong>GitHub</strong> <em>(opzionale)</em></td><td>Link al repo se la skill vive su GitHub. Altrimenti lascia vuoto.</td></tr>
+          <tr><td><strong>Riferimenti normativi</strong> <em>(opzionale)</em></td><td>Articoli, leggi, sentenze da consultare.</td></tr>
+          <tr><td><strong>Tipo di artefatto</strong> <em>(opzionale)</em></td><td>Aiuta i colleghi a capire cos'è quello che stai condividendo. Cinque valori — vedi sezione "Tipo di artefatto" sotto. Se non sai quale scegliere, lascia "non specifico" — va benissimo.</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Passo 3 — Click "Pubblica"</h4>
+
+      <p>Il contributo va live subito. Reload pagina e lo vedi in cima alla griglia. Se hai messo l'email, ricevi una mail con il link "Modifica/cancella" (validità: 365 giorni).</p>
+
+      <h4>Anonimato</h4>
+
+      <p>Per la pubblicazione di una skill o di un prompt non c'è opzione anonima — il contributo resta autoriale per dare credito a chi l'ha costruito. Se non vuoi metterci il tuo nome, <strong>non pubblicarlo</strong>.</p>
+
+      <p>Le <strong>recensioni</strong> e le <strong>segnalazioni di errori</strong>, invece, possono essere anonime opt-in (vedi sotto).</p>
+
+      <hr>
+
+      <h3>Come scrivere una recensione</h3>
+
+      <p>Una recensione è un'opinione su una skill o un prompt che hai usato. Aiuta i colleghi a capire se funziona davvero, in che casi, con quali limiti.</p>
+
+      <h4>Passo 1 — Apri la scheda del contributo</h4>
+
+      <p>Tab "Skill e prompt" → click "Apri" sulla scheda che vuoi recensire.</p>
+
+      <h4>Passo 2 — Scorri in fondo, click "Scrivi una recensione"</h4>
+
+      <p>Bottone verde nella sezione "Recensioni".</p>
+
+      <h4>Passo 3 — Compila</h4>
+
+      <table>
+        <thead>
+          <tr><th>Campo</th><th>Cosa scrivere</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Valutazione</strong></td><td>Da 1 a 5 stelle. Clicca le stelle.</td></tr>
+          <tr><td><strong>La tua recensione</strong></td><td>Come l'hai usata? Su che caso? Cosa ha funzionato, cosa no?</td></tr>
+          <tr><td><strong>Il tuo nome</strong></td><td>Es. <em>Avv. Mario Bianchi</em>.</td></tr>
+          <tr><td><strong>Email</strong> <em>(opzionale)</em></td><td>Se la metti, ricevi link "Modifica/cancella" della recensione (utile se cambi idea o ti accorgi di un errore). Non viene pubblicata.</td></tr>
+          <tr><td><strong>Pubblica anonima</strong></td><td>Casella spuntabile. Se vuoi pubblicare anonima (vedi sotto).</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Anonimato opt-in</h4>
+
+      <p>Le recensioni firmate hanno più peso (lettori vedono chi le scrive). Però se hai una <strong>ragione concreta</strong> per non firmare (es. recensione critica su una skill o un prompt di un partner di studio, o caso commercialmente delicato), puoi spuntare <em>"Pubblica anonima"</em>. Il tuo nome non apparirà pubblicamente. Apparirà come <em>"Avvocato (anonimo)"</em>.</p>
+
+      <h4>Passo 4 — Click "Pubblica"</h4>
+
+      <p>Toast di conferma. Reload pagina → vedi la tua recensione nella scheda.</p>
+
+      <hr>
+
+      <h3 id="come-segnalare-un-errore-dellai">Come segnalare un errore dell'AI</h3>
+
+      <p>Le segnalazioni servono per <strong>avvisare i colleghi</strong> di trappole note dell'AI in contesti legali italiani. Esempio classico: l'AI cita una sentenza Cassazione che non esiste, ma con confidenza alta.</p>
+
+      <h4>Regola del framing: fatto + contesto + prova, non valutazione del prodotto</h4>
+
+      <p>Qui si registrano <strong>errori fattuali osservati</strong>, non opinioni sul tool. Sono ammessi i nomi dei prodotti (Claude, ChatGPT, Lexroom, BuddaLaw, One Legale, ecc.) <em>se</em> servono a inquadrare l'errore. Esempi:</p>
+
+      <ul>
+        <li>✅ Va bene: <em>"Lexroom su NIS2 ha lasciato fuori 3 determinazioni ACN — verificato sul sito ACN, decisioni n. X, Y, Z del 2025"</em></li>
+        <li>✅ Va bene: <em>"Claude ha citato Cass. n. 12345/2025 — sentenza inesistente, verificato su CED"</em></li>
+        <li>❌ Non va bene: <em>"Lexroom è scadente"</em> / <em>"non lo userei mai"</em></li>
+        <li>❌ Non va bene: <em>"BuddaLaw è meglio di Lexroom"</em> (è un giudizio comparativo di prodotto, non un errore osservato)</li>
+      </ul>
+
+      <p>Se quello che vuoi condividere è una recensione di un tool intero (cosa fa bene, cosa fa male nel complesso, vale i suoi soldi), questo non è il posto giusto: il sito non ospita recensioni di prodotti commerciali.</p>
+
+      <h4>⚠️ Prima — Anonimizza il caso</h4>
+
+      <p>Se l'errore riguarda un caso reale del tuo studio, prima di condividere il prompt e la risposta dell'AI devi <strong>togliere tutti i dati identificativi</strong>: nome del cliente, controparti, numeri di fascicolo, dati personali, sede.</p>
+
+      <p>Usa <strong>Recode IT</strong> (<a href="https://recode.micheleloi.pro" target="_blank" rel="noopener">recode.micheleloi.pro</a>) per pseudonimizzare automaticamente. È un strumento che gira tutto nel tuo browser: niente viene mandato a server esterni, e tu puoi de-pseudonimizzare quando vuoi nei tuoi documenti.</p>
+
+      <h4>Passo 1 — Click "Segnala un errore"</h4>
+
+      <p>Sulla tab "Errori dell'AI", bottone azzurro in alto a destra.</p>
+
+      <h4>Passo 2 — Compila</h4>
+
+      <table>
+        <thead>
+          <tr><th>Campo</th><th>Cosa scrivere</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>AI che ha sbagliato</strong></td><td>Menu: Claude / ChatGPT / Copilot / Gemini / Codex / Mistral / Altra</td></tr>
+          <tr><td><strong>Area legale</strong></td><td>Menu: come per le skill</td></tr>
+          <tr><td><strong>Titolo dell'errore</strong></td><td>Una riga descrittiva. Es. <em>"Claude inventa Cass. n. 12345/2025 inesistente"</em></td></tr>
+          <tr><td><strong>Descrizione breve</strong></td><td>2-3 righe: contesto del caso (anonimizzato!), cosa cercavi, cosa ti aspettavi</td></tr>
+          <tr><td><strong>Prompt che hai dato</strong></td><td>Il prompt che hai posto all'AI. ANONIMIZZATO.</td></tr>
+          <tr><td><strong>Risposta errata dell'AI</strong></td><td>La risposta sbagliata. ANONIMIZZATA.</td></tr>
+          <tr><td><strong>Cosa era corretto</strong></td><td>Spiega cosa l'AI ha sbagliato + qual è la risposta giusta + cita norme, sentenze, articoli.</td></tr>
+          <tr><td><strong>Il tuo nome</strong></td><td>Es. <em>Avv. Tizio</em></td></tr>
+          <tr><td><strong>Email</strong> <em>(opzionale)</em></td><td>Per ricevere link "Modifica/cancella" della segnalazione. Non pubblicata.</td></tr>
+          <tr><td><strong>Pubblica anonima</strong></td><td>Spunta se il caso è ancora riconducibile a un cliente nonostante l'anonimizzazione, o per altra ragione concreta.</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Passo 3 — Click "Pubblica"</h4>
+
+      <p>Toast di conferma. La segnalazione va live subito.</p>
+
+      <hr>
+
+      <h3>Modificare o cancellare un tuo contributo</h3>
+
+      <p>Se hai pubblicato una recensione o un errore con la tua email, hai ricevuto un'email con un link tipo:</p>
+
+      <p><code>https://micheleloi.github.io/skill-sharing-giuristi-x/edit.html?token=ABC123…</code></p>
+
+      <p><strong>Conservalo</strong> — è la tua credenziale. Senza, non puoi modificare. Il link non scade per 365 giorni.</p>
+
+      <h4>Come usarlo</h4>
+
+      <ol>
+        <li>Click sul link nell'email</li>
+        <li>Si apre una pagina con un form pre-compilato con i tuoi dati pubblicati</li>
+        <li><strong>Per modificare</strong>: cambia i campi che vuoi → click "Salva modifiche"</li>
+        <li><strong>Per cancellare</strong>: click "Cancella definitivamente" → conferma → il contributo sparisce</li>
+      </ol>
+
+      <h4>E per le skill / prompt pubblicati?</h4>
+
+      <p>Le <strong>skill e i prompt</strong> non si modificano dopo la pubblicazione (sono append-only, come libri pubblicati). Se hai sbagliato qualcosa e vuoi correggere, hai due strade:</p>
+
+      <ul>
+        <li><strong>Pubblica una v2</strong> con titolo <em>"… v2"</em> e nelle prime righe scrivi <em>"supersedes versione precedente"</em></li>
+        <li><strong>Richiedi rimozione</strong> della prima usando il modulo in fondo alla pagina (vedi sotto)</li>
+      </ul>
+
+      <hr>
+
+      <h3>Richiedere rimozione di un contenuto</h3>
+
+      <p>Se hai pubblicato qualcosa che vuoi rimuovere (skill, prompt, recensione, errore) ma non hai più accesso all'email per modificare, o se vuoi segnalare un contenuto altrui (es. dati personali non anonimizzati per errore), c'è il modulo <strong>"Hai bisogno di rimuovere un contenuto?"</strong> in fondo alla pagina.</p>
+
+      <ol>
+        <li>Click sul link nel footer</li>
+        <li>Compila: descrivi cosa rimuovere + perché + lascia tua email</li>
+        <li>Click "Invia richiesta"</li>
+        <li>Si apre il tuo client di posta con il messaggio già scritto, indirizzato al maintainer del prototipo</li>
+        <li>Conferma l'invio dal tuo client mail</li>
+      </ol>
+
+      <p>Il maintainer valuta e rimuove di solito entro 2-5 giorni.</p>
+
+      <hr>
+
+      <h3>Come funziona "Utile (n)"</h3>
+
+      <p>Sotto ogni recensione c'è un bottone <em>"Utile (n)"</em>. Cliccalo se la recensione ti è servita a decidere se usare quella skill o quel prompt. Aumenta il conteggio di 1.</p>
+
+      <p>Non puoi votare la stessa recensione due volte (il sito ricorda quali hai già votato sul tuo browser).</p>
+
+      <hr>
+
+      <h3>Esempio: l'avvocato che ha un suo prompt e vuole condividerlo</h3>
+
+      <p>Tu hai un prompt che hai sviluppato col tempo — istruzioni che dai a Claude (o ChatGPT, o Gemini) per fare un certo lavoro ricorrente in studio. Lo hai magari in un file di Word, in un blocco note, o copiato dalle tue ultime conversazioni con l'AI. <strong>Funziona</strong>, sai esattamente come usarlo.</p>
+
+      <p>Non sai cos'è GitHub, non vuoi imparare YAML, non vuoi un repo. Vuoi solo condividerlo coi colleghi del gruppo.</p>
+
+      <p>Va benissimo. Il sito non distingue fra "skill formale" e "prompt grezzo" — sono tutte istruzioni che dai all'AI. Ecco come.</p>
+
+      <h4>Passo 1 — Click "Condividi le tue istruzioni"</h4>
+
+      <p>Bottone azzurro in alto a destra del sito. Si apre un modulo.</p>
+
+      <h4>Passo 2 — Compila i campi</h4>
+
+      <p>Esempio plausibile (immagina che la tua skill sia una <em>"Lettera di messa in mora per pagamento arretrato"</em>):</p>
+
+      <table>
+        <thead>
+          <tr><th>Campo</th><th>Cosa scrivere</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Il tuo nome</strong></td><td>Es. <code>Avv. Maria Rossi</code></td></tr>
+          <tr><td><strong>Email</strong> <em>(opzionale)</em></td><td>La tua. Serve solo per ricevere — se la metti — il link "Modifica/cancella" via mail. Non viene pubblicata.</td></tr>
+          <tr><td><strong>Titolo</strong></td><td>Es. <code>Lettera di messa in mora — schema studio Rossi</code></td></tr>
+          <tr><td><strong>Area legale</strong></td><td><code>civile</code></td></tr>
+          <tr><td><strong>Cosa fanno queste istruzioni</strong></td><td>2-3 righe. Es. <em>"Genera una lettera di messa in mora in stile forense italiano, partendo dai dati del creditore, debitore, importo e riferimento del rapporto sottostante. Tono cortese ma fermo. Indica le conseguenze del mancato pagamento entro il termine."</em></td></tr>
+          <tr><td><strong>Le istruzioni che dai all'AI</strong></td><td>Apri il file dove le hai salvate, copia tutto, incolla qui. Niente formato speciale richiesto — anche un blocco di testo va bene. (Esempio sotto.)</td></tr>
+          <tr><td><strong>GitHub</strong> <em>(opzionale)</em></td><td><strong>Lascialo vuoto.</strong> Non ti serve.</td></tr>
+          <tr><td><strong>Riferimenti normativi</strong> <em>(opzionale)</em></td><td>Articoli/leggi che il prompt cita. Es. <em>"Art. 1219 c.c. (mora ex re), Art. 1224 c.c. (interessi)"</em>.</td></tr>
+          <tr><td><strong>Tipo di artefatto</strong> <em>(opzionale)</em></td><td>Per questo esempio (prompt grezzo senza frontmatter), seleziona <code>Prompt libero (testo grezzo)</code>. Se non sai, lascia "non specifico".</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Esempio di "Le istruzioni che dai all'AI" — formato libero</h4>
+
+      <p>Questo è il blocco da incollare. Non serve niente di tecnico — è il prompt come tu lo daresti a Claude:</p>
+
+      <pre><code>Sei un assistente di studio legale italiano civilista.
+
+Quando ti fornisco:
+- nome e dati del creditore
+- nome e dati del debitore
+- importo dovuto
+- riferimento del rapporto (contratto, fattura, scrittura privata…)
+- eventuali tentativi di sollecito già fatti
+
+Produci una lettera di messa in mora ex art. 1219 c.c., in forma scritta
+adatta a invio raccomandata A/R, con questo schema:
+
+1. Intestazione formale (mittente — studio dell'avvocato; destinatario)
+2. Premessa breve: richiamo al rapporto da cui sorge il credito
+3. Quantificazione del dovuto: importo + eventuali interessi maturati
+   (richiama art. 1224 c.c. se calcoli interessi legali)
+4. Diffida ad adempiere entro [termine — chiedimelo se non specificato,
+   suggerisci 15 giorni]
+5. Conseguenze: avvertenza di ricorso a vie legali in difetto, con costi
+   a carico del debitore
+6. Sottoscrizione
+
+Tono: cortese ma fermo. Niente minacce sproporzionate.
+
+Marca con [VERIFICA] ogni passaggio che richiede controllo formale
+(termini, calcoli interessi, scadenze).
+
+NON inventare riferimenti normativi specifici al di là di art. 1219 e
+1224 c.c. — se servisse altro, segnalalo come [DA INTEGRARE].</code></pre>
+
+      <p>Questo è esattamente cosa incolli nel campo. Niente <code>---</code> in alto, niente <code>name:</code>, niente regole strane. Se vuoi, puoi aggiungere le righe <code>---</code> con i campi <code>name</code>, <code>description</code>, <code>when_to_use</code> (è la forma "canonica" di una skill Claude Code) — ma non è obbligatorio.</p>
+
+      <h4>Passo 3 — Click "Pubblica"</h4>
+
+      <p>Toast verde di conferma. Reload pagina e la vedi in cima alla griglia, recensibile dai colleghi che la useranno.</p>
+
+      <h4>Se vuoi modificare/cancellare dopo</h4>
+
+      <p>Se al Passo 2 hai messo la tua email, ricevi via mail un link permanente per modificare/cancellare il contributo in qualsiasi momento (vale 365 giorni). Conservalo.</p>
+
+      <p>Se non hai messo l'email, il contributo è <strong>append-only</strong>: non si modifica. Vuoi correggere un errore? Due strade:</p>
+      <ul>
+        <li><strong>Pubblica una v2</strong> con titolo <em>"Lettera di messa in mora — schema studio Rossi v2"</em> e nelle prime righe del contenuto scrivi <em>"sostituisce la versione precedente"</em></li>
+        <li><strong>Richiedi rimozione</strong> via il modulo "Hai bisogno di rimuovere un contenuto?" in fondo alla pagina</li>
+      </ul>
+
+      <hr>
+
+      <h3>Modello frontmatter SKILL.md (opzionale, per chi vuole formato canonico)</h3>
+
+      <p>Se ti interessa scrivere la skill in formato <strong>plugin Claude Code</strong> standard — utile se prevedi di metterla anche su GitHub o di distribuirla in un marketplace — puoi prefissare il contenuto con un blocco di metadati YAML:</p>
+
+      <pre><code>---
+name: nome-skill-in-kebab-case
+description: Una riga che spiega cosa fa.
+when_to_use: Quando attivare questa skill (descrizione del trigger).
+---
+
+[…il prompt come sopra…]</code></pre>
+
+      <p>Lo capisce Claude Code, lo capiscono i tool del marketplace Anthropic. Ma per pubblicare qui non è richiesto.</p>
+
+      <hr>
+
+      <h3>Tipo di artefatto (campo opzionale del modulo)</h3>
+
+      <p>Il modulo "Condividi le tue istruzioni" ha un campo opzionale <strong>"Tipo di artefatto"</strong>. Serve solo a far capire ai colleghi <em>cos'è</em> quello che stai condividendo (perché formati diversi richiedono modi diversi di leggerli e di usarli). Cinque valori:</p>
+
+      <ul>
+        <li><strong>Prompt libero (testo grezzo)</strong> — il caso più comune. Hai un blocco di testo che dai all'AI per fare un certo lavoro, senza intestazioni speciali. Es. l'esempio "Lettera di messa in mora" sopra.</li>
+        <li><strong>SKILL.md formale (frontmatter + body, plugin Claude Code)</strong> — testo che inizia con <code>---</code> + campi <code>name / description / when_to_use</code> + altro <code>---</code> + body. Formato canonico Claude Code, utilizzabile come plugin.</li>
+        <li><strong>Frammento di CLAUDE.md (project-level instructions)</strong> — istruzioni di progetto / di studio: regole permanenti che Claude legge all'inizio di ogni conversazione su un certo lavoro. Es. <em>"sei sempre cortese ma fermo; cita sempre l'articolo del codice; non inventare giurisprudenza"</em>.</li>
+        <li><strong>Orchestrazione MCP / agente browser</strong> — più complesso: configurazione che coordina più strumenti (es. browser automation, MCP server, agente che fa più passi). Per chi sa già di cosa si tratta.</li>
+        <li><strong>Altro</strong> — non rientra in nessuna categoria sopra (es. preferenze per un'altra AI che non è Claude, modulo di chat custom).</li>
+      </ul>
+
+      <p>Se non sai quale scegliere, lascia "non specifico". Va benissimo — il sito tratta tutti i contributi allo stesso modo. Il campo è solo per aiutare la community a filtrare se cerca un certo tipo specifico.</p>
+
+      <hr>
+
+      <h3>Domande frequenti</h3>
+
+      <h4>Posso pubblicare una skill o un prompt che esiste già su GitHub?</h4>
+
+      <p>Sì. Linka il repo GitHub nel campo apposito. Il contributo resta versionato su GitHub, qui c'è una copia con discussione e recensioni.</p>
+
+      <h4>Posso recensire Lexroom (o un altro tool/servizio commerciale)?</h4>
+
+      <p><strong>No.</strong> Lexroom, BuddaLaw, One Legale, Top24, libra, 4c.ai, Manus, Calpurnio e i loro simili sono <strong>programmi interi</strong>, non skill o prompt. Le recensioni di prodotto (cosa fa bene, cosa fa male nel complesso, se vale i soldi) non hanno casa qui — questo è un posto per condividere <em>istruzioni testuali</em> che ciascuno scrive per la propria AI.</p>
+
+      <h4>Posso segnalare un errore di Lexroom (o di un altro tool commerciale)?</h4>
+
+      <p><strong>Sì</strong>, nella tab <em>Errori dell'AI</em>, con la regola del framing: fatto + contesto + prova, niente valutazione del prodotto. Esempio: <em>"Lexroom su NIS2 ha lasciato fuori 3 determinazioni ACN — verificato sul sito ACN, decisioni n. X, Y, Z del 2025"</em> è ammesso (è un errore fattuale verificabile). <em>"Lexroom è scadente"</em> non lo è. Vedi la sezione <a href="#come-segnalare-un-errore-dellai">Come segnalare un errore dell'AI</a> per dettagli.</p>
+
+      <h4>Cosa succede ai miei dati?</h4>
+
+      <ul>
+        <li>Le skill, i prompt, le recensioni e le segnalazioni che pubblichi sono <strong>public</strong> sul sito + nel database condiviso (PostgreSQL su Supabase, regione EU/Frankfurt).</li>
+        <li>L'<strong>email</strong> se la lasci viene usata solo per spedirti il link "Modifica/cancella". Non viene pubblicata, non viene venduta, non viene usata per altro.</li>
+        <li>Niente cookie di tracking, niente Google Analytics, niente pixel.</li>
+      </ul>
+
+      <h4>Posso esportare i dati / cancellare il mio account?</h4>
+
+      <p>Non c'è "account" (è auth-less). Se vuoi cancellare un tuo contributo specifico, usa il link "Modifica/cancella" se hai l'email, oppure il modulo rimozione. Per export massivo: scrivimi direttamente sul WhatsApp del gruppo.</p>
+
+      <h4>Chi paga / chi finanzia?</h4>
+
+      <p>Per ora niente. Lo gira come prototipo l'autore (Michele Loi). Free tier: GitHub Pages + Supabase + Resend bastano per il volume del gruppo.</p>
+
+      <h4>E se l'AI usata nella skill o nel prompt cambia comportamento domani?</h4>
+
+      <p>È un rischio reale. Per questo le istruzioni possono marcare <code>[VERIFICA]</code> i punti che dipendono da dato esterno. E le <strong>segnalazioni di errori</strong> sono il meccanismo per allertare la community quando un'AI inizia a sbagliare un certo task.</p>
+
+      <hr>
+
+      <h3>Licenze</h3>
+
+      <ul>
+        <li><strong>Codice del sito</strong>: AGPL-3.0 (<code>LICENSE</code> nel repo)</li>
+        <li><strong>Contenuti utente</strong> (skill, prompt, recensioni, errori): CC-BY-SA 4.0 quando l'idea diventa prodotto reale. Per ora il prototipo è esplorativo.</li>
+      </ul>
+
+      <hr>
+
+      <h3>Contatti</h3>
+
+      <p>WhatsApp del gruppo <strong>Giuristi AI</strong>. Niente email pubblica oltre al modulo rimozione.</p>
+
+      <hr>
+
+      <p><em>Versione 1.1 (2026-06-04, post-ratifica "tab unica Skill e prompt + facet opzionale Tipo di artefatto"). Documento da rivedere insieme.</em></p>
+
+    </article>
+  </div><!-- /view-istruzioni -->
 
   <p class="foot">
     Prototipo proposto al gruppo Giuristi AI · nome e gestione da confermare insieme · 2026-06-04 · codice <a href="LICENSE" target="_blank">AGPL-3.0</a>
@@ -2227,6 +2747,7 @@ function switchTab(tab) {
   });
   document.getElementById("viewSkill").classList.toggle("active", tab === "skill");
   document.getElementById("viewErrori").classList.toggle("active", tab === "errori");
+  document.getElementById("viewIstruzioni").classList.toggle("active", tab === "istruzioni");
 
   // Hero + CTA cambiano per tab
   const title = document.getElementById("heroTitle");
@@ -2237,11 +2758,18 @@ function switchTab(tab) {
     sub.textContent = "Le istruzioni che dai all'AI per lavorare meglio. Skill, prompt, preferenze — comunque le chiami, condividile coi colleghi.";
     cta.textContent = "Condividi le tue istruzioni";
     cta.onclick = openShareModal;
-  } else {
+    cta.style.display = "";
+  } else if (tab === "errori") {
     title.textContent = "Errori dell'AI nei contesti legali italiani";
     sub.textContent = "Casi reali in cui l'AI ha sbagliato. Anonimizza il caso e condividi: si impara di più dagli errori altrui che dai successi.";
     cta.textContent = "Segnala un errore";
     cta.onclick = openErrorModal;
+    cta.style.display = "";
+  } else if (tab === "istruzioni") {
+    title.textContent = "Istruzioni";
+    sub.textContent = "Come si usa SkillAdvisor: cosa pubblicare, come segnalare un errore, come modificare un tuo contributo.";
+    cta.style.display = "none";
+    cta.onclick = null;
   }
 }
 

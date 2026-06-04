@@ -2,6 +2,8 @@
 
 > Questa è una guida per chi visita il prototipo. Spiega cosa puoi fare, come pubblicare una skill o un prompt e segnalare un errore, e cosa **non** aspettarti.
 
+> **Per chi modifica questo file:** `istruzioni.md` è la **fonte autoritativa**; la tab "Istruzioni" sul sito (`index.html` → `<section id="viewIstruzioni">`) è un HTML fragment **derivato manualmente** da questo MD. **Niente automatismo**: dopo aver modificato `istruzioni.md`, chiedi a un sub-agent (o rifai a mano) la rigenerazione del fragment HTML nella section `viewIstruzioni` di `index.html`, poi commit + push entrambi i file insieme. Decisione SID-20260604-152531.
+
 ---
 
 ## Cos'è questo sito
