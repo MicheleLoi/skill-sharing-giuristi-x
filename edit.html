@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Modifica il tuo contributo — Skill Sharing Giuristi AI</title>
+<style>
+  :root {
+    --cream: #f8f5f0;
+    --cream-border: #e6e0d6;
+    --card: #ffffff;
+    --ink: #1b2230;
+    --muted: #5a6473;
+    --rule: #d8dde3;
+    --brand-blue: #1c4a8b;
+    --brand-blue-soft: #eaf0f9;
+    --brand-green: #2c8a3e;
+    --warn: #b8860b;
+    --warn-soft: #fbf3df;
+    --danger: #b34242;
+    --danger-soft: #fbecec;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    line-height: 1.5;
+  }
+  .wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 32px 24px 64px;
+  }
+  h1 {
+    margin: 0 0 8px 0;
+    font-size: 24px;
+    font-weight: 600;
+  }
+  .sub {
+    color: var(--muted);
+    margin: 0 0 24px 0;
+    font-size: 14px;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--cream-border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+  .target-badge {
+    display: inline-block;
+    background: var(--brand-blue-soft);
+    color: var(--brand-blue);
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+  .form-row { margin-bottom: 14px; }
+  .form-row label {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .form-row .opt {
+    font-weight: 400;
+    color: var(--muted);
+    margin-left: 6px;
+    font-style: italic;
+  }
+  .form-row input,
+  .form-row textarea,
+  .form-row select {
+    width: 100%;
+    padding: 9px 12px;
+    font-size: 13.5px;
+    font-family: inherit;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    background: white;
+    color: var(--ink);
+  }
+  .form-row textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+  .form-row textarea.large {
+    min-height: 140px;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 12.5px;
+  }
+  .form-row input:focus,
+  .form-row textarea:focus,
+  .form-row select:focus {
+    outline: 2px solid var(--brand-blue-soft);
+    border-color: var(--brand-blue);
+  }
+  .stars-picker {
+    display: inline-flex;
+    gap: 2px;
+    font-size: 28px;
+    color: var(--rule);
+    cursor: pointer;
+    user-select: none;
+  }
+  .stars-picker span { padding: 0 3px; }
+  .stars-picker span.on { color: #d9b32a; }
+  .anon-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    background: var(--warn-soft);
+    border-left: 3px solid var(--warn);
+    padding: 10px 12px;
+    border-radius: 4px;
+    margin-top: 6px;
+  }
+  .anon-row input[type="checkbox"] {
+    width: auto;
+    margin-top: 2px;
+  }
+  .anon-row label { margin: 0; font-weight: 500; font-size: 12.5px; }
+  .actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid var(--cream-border);
+  }
+  .btn {
+    border: 0;
+    padding: 10px 18px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .btn-primary {
+    background: var(--brand-blue);
+    color: white;
+  }
+  .btn-primary:hover { background: #163a6e; }
+  .btn-danger {
+    background: white;
+    color: var(--danger);
+    border: 1px solid var(--danger);
+  }
+  .btn-danger:hover {
+    background: var(--danger);
+    color: white;
+  }
+  .alert {
+    padding: 14px 18px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-size: 13.5px;
+  }
+  .alert-error {
+    background: var(--danger-soft);
+    border-left: 3px solid var(--danger);
+    color: var(--ink);
+  }
+  .alert-success {
+    background: #e6f1e9;
+    border-left: 3px solid var(--brand-green);
+    color: var(--ink);
+  }
+  .home-link {
+    color: var(--brand-blue);
+    text-decoration: none;
+    font-size: 13px;
+  }
+  .home-link:hover { text-decoration: underline; }
+  .loading {
+    color: var(--muted);
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <p><a href="index.html" class="home-link">← Torna a Skill Sharing Giuristi AI</a></p>
+  <h1>Modifica il tuo contributo</h1>
+  <p class="sub">Usa questo link permanente per modificare o cancellare la <span id="kindLabel">tua</span> pubblicazione. Il token nel link è la tua credenziale — non condividerlo.</p>
+
+  <div id="content"><p class="loading">Carico il contenuto…</p></div>
+</div>
+
+<script>
+// ============================================================
+// Config — replaced by maintainer before push
+// ============================================================
+const SUPABASE_URL = "https://gqapjxcakjnysapdffgd.supabase.co";
+const EDIT_FN_URL = SUPABASE_URL + "/functions/v1/edit-via-token";
+
+// ============================================================
+// Helpers
+// ============================================================
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  })[c]);
+}
+
+function showError(msg) {
+  document.getElementById("content").innerHTML =
+    `<div class="alert alert-error">${escapeHtml(msg)}</div>
+     <p><a href="index.html" class="home-link">Torna alla home</a></p>`;
+}
+
+function showSuccess(msg) {
+  document.getElementById("content").innerHTML =
+    `<div class="alert alert-success">${escapeHtml(msg)}</div>
+     <p><a href="index.html" class="home-link">Torna alla home</a></p>`;
+}
+
+async function callEditFn(action, payload = null) {
+  const body = { token, action };
+  if (payload) body.payload = payload;
+  const res = await fetch(EDIT_FN_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.error || "Errore sconosciuto");
+  return json;
+}
+
+// ============================================================
+// Read token from URL
+// ============================================================
+const urlParams = new URLSearchParams(location.search);
+const token = urlParams.get("token");
+
+if (!token) {
+  showError("Link non valido — manca il token. Usa il link che hai ricevuto via email.");
+  throw new Error("missing token");
+}
+
+// ============================================================
+// Load and render
+// ============================================================
+let targetType = null; // 'review' | 'error'
+let currentPayload = null;
+
+(async () => {
+  try {
+    const { target_type, payload } = await callEditFn("load");
+    targetType = target_type;
+    currentPayload = payload;
+    document.getElementById("kindLabel").textContent =
+      target_type === "review" ? "tua recensione" : "tua segnalazione di errore";
+    renderForm();
+  } catch (e) {
+    showError(e.message + " — il link potrebbe essere scaduto o già usato per cancellare.");
+  }
+})();
+
+function renderForm() {
+  const container = document.getElementById("content");
+  const badge = targetType === "review" ? "Recensione" : "Segnalazione errore";
+
+  if (targetType === "review") {
+    container.innerHTML = `
+      <div class="card">
+        <span class="target-badge">${badge}</span>
+        <form id="editForm" onsubmit="onSave(event)">
+          <div class="form-row">
+            <label>Valutazione</label>
+            <div class="stars-picker" id="starsPicker">
+              <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
+            </div>
+            <input type="hidden" name="stars" id="starsValue" value="${currentPayload.stars || 0}">
+          </div>
+          <div class="form-row">
+            <label>La tua recensione</label>
+            <textarea required name="text">${escapeHtml(currentPayload.text)}</textarea>
+          </div>
+          <div class="form-row">
+            <label>Il tuo nome</label>
+            <input required type="text" name="author_name" value="${escapeHtml(currentPayload.author_name)}">
+          </div>
+          <div class="form-row anon-row">
+            <input type="checkbox" id="anonCheck" name="anonymous" ${currentPayload.anonymous ? 'checked' : ''}>
+            <label for="anonCheck">Pubblica la recensione anonima</label>
+          </div>
+          <div class="actions">
+            <button type="button" class="btn btn-danger" onclick="onDelete()">Cancella definitivamente</button>
+            <button type="submit" class="btn btn-primary">Salva modifiche</button>
+          </div>
+        </form>
+      </div>
+    `;
+    initStarsPicker();
+  } else {
+    // error
+    container.innerHTML = `
+      <div class="card">
+        <span class="target-badge">${badge}</span>
+        <form id="editForm" onsubmit="onSave(event)">
+          <div class="form-row">
+            <label>Titolo</label>
+            <input required type="text" name="title" value="${escapeHtml(currentPayload.title)}">
+          </div>
+          <div class="form-row">
+            <label>AI che ha sbagliato</label>
+            <select required name="ai_tool">
+              ${['Claude','ChatGPT','Copilot','Gemini','Codex','Mistral','Altra'].map(t =>
+                `<option ${currentPayload.ai_tool===t?'selected':''}>${t}</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-row">
+            <label>Area legale</label>
+            <select required name="area">
+              ${['civile','penale','lavoro','amministrativo','commerciale','privacy','societario','tributario','contenzioso','ip','generale'].map(a =>
+                `<option ${currentPayload.area===a?'selected':''}>${a}</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-row">
+            <label>Descrizione</label>
+            <textarea required name="description">${escapeHtml(currentPayload.description)}</textarea>
+          </div>
+          <div class="form-row">
+            <label>Prompt</label>
+            <textarea required class="large" name="prompt">${escapeHtml(currentPayload.prompt)}</textarea>
+          </div>
+          <div class="form-row">
+            <label>Risposta errata dell'AI</label>
+            <textarea required class="large" name="wrong_answer">${escapeHtml(currentPayload.wrong_answer)}</textarea>
+          </div>
+          <div class="form-row">
+            <label>Cosa era corretto</label>
+            <textarea required name="correction">${escapeHtml(currentPayload.correction)}</textarea>
+          </div>
+          <div class="form-row">
+            <label>Riferimenti normativi <span class="opt">(opzionale)</span></label>
+            <textarea name="references_text">${escapeHtml(currentPayload.references_text || '')}</textarea>
+          </div>
+          <div class="form-row">
+            <label>Il tuo nome</label>
+            <input required type="text" name="author_name" value="${escapeHtml(currentPayload.author_name)}">
+          </div>
+          <div class="form-row anon-row">
+            <input type="checkbox" id="anonCheck" name="anonymous" ${currentPayload.anonymous ? 'checked' : ''}>
+            <label for="anonCheck">Pubblica la segnalazione anonima</label>
+          </div>
+          <div class="actions">
+            <button type="button" class="btn btn-danger" onclick="onDelete()">Cancella definitivamente</button>
+            <button type="submit" class="btn btn-primary">Salva modifiche</button>
+          </div>
+        </form>
+      </div>
+    `;
+  }
+}
+
+function initStarsPicker() {
+  const picker = document.getElementById("starsPicker");
+  if (!picker) return;
+  function paint(value) {
+    picker.querySelectorAll("span").forEach(el => {
+      el.classList.toggle("on", parseInt(el.dataset.v, 10) <= value);
+    });
+  }
+  picker.querySelectorAll("span").forEach(el => {
+    el.addEventListener("click", () => {
+      const v = parseInt(el.dataset.v, 10);
+      document.getElementById("starsValue").value = String(v);
+      paint(v);
+    });
+  });
+  paint(parseInt(document.getElementById("starsValue").value, 10) || 0);
+}
+
+async function onSave(ev) {
+  ev.preventDefault();
+  const f = ev.target;
+  const data = {};
+  for (const el of f.elements) {
+    if (!el.name) continue;
+    if (el.type === "checkbox") data[el.name] = el.checked;
+    else if (el.type === "hidden") data[el.name] = parseInt(el.value, 10);
+    else data[el.name] = el.value;
+  }
+  // Validation stelle per review
+  if (targetType === "review" && (!data.stars || data.stars < 1 || data.stars > 5)) {
+    alert("Seleziona da 1 a 5 stelle.");
+    return;
+  }
+  try {
+    await callEditFn("update", data);
+    showSuccess("Modifiche salvate. Grazie.");
+  } catch (e) {
+    alert("Errore: " + e.message);
+  }
+}
+
+async function onDelete() {
+  if (!confirm("Vuoi cancellare definitivamente il tuo contributo? L'azione è irreversibile.")) {
+    return;
+  }
+  try {
+    await callEditFn("delete");
+    showSuccess("Contributo cancellato. Grazie.");
+  } catch (e) {
+    alert("Errore: " + e.message);
+  }
+}
+</script>
+
+</body>
+</html>

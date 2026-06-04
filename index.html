@@ -1,0 +1,2438 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Skill Sharing Giuristi AI — prototipo</title>
+<style>
+  :root {
+    --cream: #f8f5f0;
+    --cream-border: #e6e0d6;
+    --card: #ffffff;
+    --ink: #1b2230;
+    --muted: #5a6473;
+    --rule: #d8dde3;
+    --brand-blue: #1c4a8b;
+    --brand-blue-soft: #eaf0f9;
+    --brand-green: #2c8a3e;
+    --brand-green-soft: #e6f1e9;
+    --warn: #b8860b;
+    --warn-soft: #fbf3df;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--brand-blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  button { font-family: inherit; cursor: pointer; }
+
+  .wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 32px 24px 64px;
+  }
+
+  /* ===== Hero ===== */
+  .hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--cream-border);
+    margin-bottom: 24px;
+  }
+  .hero-text h1 {
+    margin: 0 0 8px 0;
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .hero-text p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 15px;
+    max-width: 560px;
+  }
+  .cta-share {
+    background: var(--brand-blue);
+    color: white;
+    border: 0;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .cta-share:hover { background: #163a6e; }
+
+  /* ===== Toolbar ===== */
+  .toolbar {
+    background: var(--card);
+    border: 1px solid var(--cream-border);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 24px;
+  }
+  .toolbar-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .search {
+    flex: 1;
+    min-width: 240px;
+    padding: 10px 14px;
+    font-size: 14px;
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    background: white;
+    color: var(--ink);
+  }
+  .search:focus { outline: 2px solid var(--brand-blue-soft); border-color: var(--brand-blue); }
+  .filter-label {
+    font-size: 13px;
+    color: var(--muted);
+    margin-right: 4px;
+  }
+  .pills {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+  .pill {
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    border: 1px solid var(--rule);
+    background: white;
+    color: var(--muted);
+    cursor: pointer;
+    user-select: none;
+  }
+  .pill[aria-pressed="true"] {
+    background: var(--brand-green-soft);
+    border-color: var(--brand-green);
+    color: var(--brand-green);
+    font-weight: 600;
+  }
+  .pill.reset {
+    background: transparent;
+    color: var(--brand-blue);
+    border-color: transparent;
+  }
+
+  /* ===== Grid ===== */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 16px;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--cream-border);
+    border-radius: 12px;
+    padding: 18px 18px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .card h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.35;
+  }
+  .card-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: var(--muted);
+    flex-wrap: wrap;
+  }
+  .area-badge {
+    background: var(--brand-green-soft);
+    color: var(--brand-green);
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: capitalize;
+  }
+  .gh-badge {
+    background: var(--brand-blue-soft);
+    color: var(--brand-blue);
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .card-desc {
+    color: var(--muted);
+    font-size: 13.5px;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .card-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 4px;
+    padding-top: 10px;
+    border-top: 1px solid var(--cream-border);
+  }
+  .card-open {
+    background: transparent;
+    border: 0;
+    color: var(--brand-blue);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 4px 8px;
+  }
+  .card-open:hover { text-decoration: underline; }
+  .card[data-open="true"] .card-open::after { content: " ▲"; }
+  .card-open::after { content: " ▼"; font-size: 10px; }
+
+  .detail {
+    display: none;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--cream-border);
+  }
+  .card[data-open="true"] .detail { display: block; }
+  .detail-section { margin-bottom: 12px; }
+  .detail-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .detail-desc { font-size: 13.5px; color: var(--ink); margin: 0; }
+  pre.skill-content {
+    background: var(--cream);
+    border: 1px solid var(--cream-border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--ink);
+    overflow-x: auto;
+    white-space: pre-wrap;
+    max-height: 360px;
+    overflow-y: auto;
+    margin: 0;
+  }
+  .detail-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+  .btn-copy {
+    background: var(--brand-blue);
+    color: white;
+    border: 0;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 12.5px;
+    font-weight: 600;
+  }
+  .btn-copy:hover { background: #163a6e; }
+  .btn-copy.ok { background: var(--brand-green); }
+  .gh-link, .ref-link {
+    font-size: 12.5px;
+    color: var(--brand-blue);
+    padding: 8px 14px;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    background: white;
+  }
+  .gh-link:hover, .ref-link:hover { background: var(--brand-blue-soft); text-decoration: none; }
+  .refs {
+    font-size: 12.5px;
+    color: var(--muted);
+    background: var(--warn-soft);
+    border-left: 3px solid var(--warn);
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin-top: 8px;
+  }
+
+  /* ===== Empty state ===== */
+  .empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 48px 24px;
+    color: var(--muted);
+    font-size: 14px;
+    background: var(--card);
+    border: 1px dashed var(--cream-border);
+    border-radius: 12px;
+  }
+
+  /* ===== Modal ===== */
+  .modal-backdrop {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(27, 34, 48, 0.45);
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    z-index: 50;
+  }
+  .modal-backdrop.show { display: flex; }
+  .modal {
+    background: var(--card);
+    border-radius: 14px;
+    width: 100%;
+    max-width: 560px;
+    max-height: 88vh;
+    overflow-y: auto;
+    padding: 24px 24px 20px;
+    box-shadow: 0 12px 32px rgba(27, 34, 48, 0.18);
+  }
+  .modal h2 { margin: 0 0 6px 0; font-size: 20px; }
+  .modal-sub { color: var(--muted); font-size: 13.5px; margin: 0 0 18px 0; }
+  .form-row { margin-bottom: 14px; }
+  .form-row label {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .form-row .opt {
+    font-weight: 400;
+    color: var(--muted);
+    margin-left: 6px;
+    font-style: italic;
+  }
+  .form-row input, .form-row textarea, .form-row select {
+    width: 100%;
+    padding: 9px 12px;
+    font-size: 13.5px;
+    font-family: inherit;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    background: white;
+    color: var(--ink);
+  }
+  .form-row textarea { resize: vertical; min-height: 80px; }
+  .form-row textarea.large { min-height: 140px; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 12.5px; }
+  .form-row input:focus, .form-row textarea:focus, .form-row select:focus {
+    outline: 2px solid var(--brand-blue-soft);
+    border-color: var(--brand-blue);
+  }
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--cream-border);
+  }
+  .btn-secondary {
+    background: white;
+    color: var(--muted);
+    border: 1px solid var(--rule);
+    padding: 9px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .btn-primary {
+    background: var(--brand-blue);
+    color: white;
+    border: 0;
+    padding: 9px 18px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .btn-primary:hover { background: #163a6e; }
+
+  /* ===== Toast ===== */
+  .toast {
+    position: fixed;
+    bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--brand-green);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 13.5px;
+    font-weight: 600;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s, transform 0.2s;
+    z-index: 100;
+    box-shadow: 0 6px 16px rgba(44, 138, 62, 0.3);
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* ===== Stars + Reviews ===== */
+  .stars {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .stars-glyph {
+    color: #d9b32a;
+    letter-spacing: 1px;
+    font-size: 14px;
+    line-height: 1;
+  }
+  .stars-glyph.empty { color: var(--rule); }
+  .stars-avg {
+    font-weight: 600;
+    color: var(--ink);
+    margin-left: 2px;
+  }
+  .stars-count {
+    color: var(--muted);
+    font-size: 12px;
+  }
+  .stars-empty-state {
+    font-size: 12px;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  .reviews-block {
+    background: var(--cream);
+    border: 1px solid var(--cream-border);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .reviews-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .reviews-head h4 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .btn-review {
+    background: var(--brand-green);
+    color: white;
+    border: 0;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .btn-review:hover { background: #226d31; }
+
+  .review-item {
+    background: white;
+    border: 1px solid var(--cream-border);
+    border-radius: 6px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+  }
+  .review-item:last-child { margin-bottom: 0; }
+  .review-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+  }
+  .review-author {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .review-author.anon {
+    color: var(--muted);
+    font-style: italic;
+    font-weight: 500;
+  }
+  .anon-hint {
+    font-size: 10.5px;
+    color: var(--muted);
+    font-weight: 400;
+    margin-left: 4px;
+  }
+  .review-date {
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .review-body {
+    font-size: 13px;
+    color: var(--ink);
+    margin: 4px 0 6px 0;
+    line-height: 1.45;
+  }
+  .review-foot {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+  .btn-helpful {
+    background: transparent;
+    border: 1px solid var(--rule);
+    color: var(--muted);
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 11.5px;
+    cursor: pointer;
+  }
+  .btn-helpful:hover { background: var(--brand-blue-soft); color: var(--brand-blue); border-color: var(--brand-blue); }
+  .btn-helpful.voted { background: var(--brand-blue-soft); color: var(--brand-blue); border-color: var(--brand-blue); font-weight: 600; }
+
+  /* Sort select */
+  .sort-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    color: var(--muted);
+  }
+  .sort-select {
+    padding: 6px 10px;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    background: white;
+    color: var(--ink);
+    font-size: 12.5px;
+    font-family: inherit;
+    cursor: pointer;
+  }
+
+  /* Mini-modal review form */
+  .star-picker {
+    display: inline-flex;
+    gap: 2px;
+    font-size: 22px;
+    color: var(--rule);
+    cursor: pointer;
+    user-select: none;
+  }
+  .star-picker span { padding: 0 2px; transition: color 0.1s; }
+  .star-picker span.on { color: #d9b32a; }
+  .anon-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    background: var(--warn-soft);
+    border-left: 3px solid var(--warn);
+    padding: 10px 12px;
+    border-radius: 4px;
+    margin-top: 6px;
+  }
+  .anon-row input[type="checkbox"] {
+    width: auto;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+  .anon-row label {
+    margin: 0;
+    font-weight: 500;
+    font-size: 12.5px;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .anon-row .anon-note {
+    display: block;
+    font-size: 11.5px;
+    color: var(--muted);
+    font-weight: 400;
+    margin-top: 2px;
+    font-style: italic;
+  }
+
+  /* ===== Tabs ===== */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    border-bottom: 1px solid var(--cream-border);
+    margin-bottom: 20px;
+  }
+  .tab {
+    background: transparent;
+    border: 0;
+    padding: 12px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -1px;
+  }
+  .tab[aria-selected="true"] {
+    color: var(--brand-blue);
+    border-bottom-color: var(--brand-blue);
+  }
+  .tab:hover { color: var(--brand-blue); }
+  .tab-count {
+    display: inline-block;
+    background: var(--cream);
+    color: var(--muted);
+    border-radius: 999px;
+    padding: 1px 8px;
+    font-size: 11px;
+    margin-left: 6px;
+    font-weight: 600;
+  }
+  .tab[aria-selected="true"] .tab-count {
+    background: var(--brand-blue-soft);
+    color: var(--brand-blue);
+  }
+
+  /* ===== View toggle ===== */
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* ===== Recode banner (errori tab) ===== */
+  .recode-banner {
+    background: var(--warn-soft);
+    border-left: 4px solid var(--warn);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .recode-banner-text {
+    flex: 1;
+    min-width: 240px;
+    font-size: 13.5px;
+    color: var(--ink);
+    line-height: 1.45;
+  }
+  .recode-banner-text strong { color: var(--warn); }
+  .recode-banner-cta {
+    background: var(--warn);
+    color: white;
+    border: 0;
+    padding: 9px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    display: inline-block;
+  }
+  .recode-banner-cta:hover { background: #936b08; text-decoration: none; color: white; }
+
+  /* ===== AI tool badge ===== */
+  .ai-badge {
+    background: var(--brand-blue-soft);
+    color: var(--brand-blue);
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 11px;
+  }
+
+  /* ===== Errore detail sections ===== */
+  .err-section {
+    background: var(--cream);
+    border: 1px solid var(--cream-border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+  }
+  .err-section.wrong {
+    background: #fbecec;
+    border-color: #f0c4c4;
+    border-left: 3px solid #b34242;
+  }
+  .err-section.correct {
+    background: var(--brand-green-soft);
+    border-color: var(--brand-green);
+    border-left: 3px solid var(--brand-green);
+  }
+  .err-section-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .err-section.wrong .err-section-label { color: #b34242; }
+  .err-section.correct .err-section-label { color: var(--brand-green); }
+  .err-section pre {
+    margin: 0;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 12.5px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    color: var(--ink);
+  }
+  .err-section p { margin: 0; font-size: 13px; color: var(--ink); line-height: 1.5; }
+
+  /* ===== Footer ===== */
+  .foot {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--cream-border);
+    color: var(--muted);
+    font-size: 12px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div style="background:#fffaf0;border:1px solid #f0d8a8;border-radius:10px;padding:14px 18px;margin-bottom:24px;font-size:13.5px;line-height:1.55;color:#5a4a1c;">
+    <strong>Prototipo per il gruppo Giuristi AI.</strong>
+    L'ho costruito come ospite del gruppo per provare un'idea. <strong>Niente è ancora deciso</strong>: il nome, l'aspetto, le categorie, la moderazione, l'hosting — tutto è da discutere insieme.
+    Se l'idea regge, l'organizzazione GitHub e il dominio passano a chi gestisce il gruppo. Scrivetemi sul WhatsApp del gruppo: critiche, modifiche, "non ci serve" — tutto bene.
+  </div>
+
+  <header class="hero">
+    <div class="hero-text">
+      <h1 id="heroTitle">Skill Sharing Giuristi AI</h1>
+      <p id="heroSub">Condividi quello che sai fare con Claude. Senza GitHub. Le tue istruzioni, pronte da copiare e usare.</p>
+    </div>
+    <button class="cta-share" id="heroCta" onclick="openShareModal()">Condividi una skill</button>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button class="tab" role="tab" aria-selected="true" data-tab="skill" onclick="switchTab('skill')">
+      Skill <span class="tab-count" id="skillCount">10</span>
+    </button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="errori" onclick="switchTab('errori')">
+      Errori dell'AI <span class="tab-count" id="errCount">0</span>
+    </button>
+  </nav>
+
+  <!-- ============ VIEW SKILL ============ -->
+  <div class="view view-skill active" id="viewSkill">
+
+  <section class="toolbar">
+    <div class="toolbar-row">
+      <input class="search" id="search" type="search" placeholder="Cerca per titolo, autore, argomento…" autocomplete="off">
+      <div class="sort-wrap">
+        <label for="sort">Ordina:</label>
+        <select id="sort" class="sort-select" onchange="setSort(this.value)">
+          <option value="reviewed">Più recensite</option>
+          <option value="rating">Meglio valutate</option>
+          <option value="recent">Più recenti</option>
+        </select>
+      </div>
+    </div>
+    <div>
+      <div class="pills" id="pills">
+        <span class="filter-label">Area:</span>
+        <!-- pills injected by JS -->
+        <button class="pill reset" onclick="resetFilters()">azzera</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="grid" id="grid"></section>
+
+  </div><!-- /view-skill -->
+
+  <!-- ============ VIEW ERRORI ============ -->
+  <div class="view view-errori" id="viewErrori">
+
+    <div class="recode-banner">
+      <div class="recode-banner-text">
+        <strong>⚠️ Prima di condividere un errore, anonimizza il caso.</strong><br>
+        Non incollare nomi di clienti, numeri di fascicolo, dati personali. Usa Recode per sostituirli con pseudonimi coerenti — resta tutto nel tuo browser, niente arriva ai nostri server.
+      </div>
+      <a class="recode-banner-cta" href="https://recode.micheleloi.pro" target="_blank" rel="noopener">Apri Recode ↗</a>
+    </div>
+
+    <section class="toolbar">
+      <div class="toolbar-row">
+        <input class="search" id="errSearch" type="search" placeholder="Cerca per titolo, AI, argomento…" autocomplete="off">
+        <div class="sort-wrap">
+          <label for="errSort">Ordina:</label>
+          <select id="errSort" class="sort-select" onchange="setErrSort(this.value)">
+            <option value="recent">Più recenti</option>
+            <option value="reported">Più segnalati</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <div class="pills" id="errPillsArea">
+          <span class="filter-label">Area:</span>
+          <button class="pill reset" onclick="resetErrFilters()">azzera</button>
+        </div>
+        <div class="pills" id="errPillsAi" style="margin-top:8px;">
+          <span class="filter-label">AI:</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid" id="errGrid"></section>
+
+  </div><!-- /view-errori -->
+
+  <p class="foot">
+    Prototipo proposto al gruppo Giuristi AI · nome e gestione da confermare insieme · 2026-06-04 · codice <a href="LICENSE" target="_blank">AGPL-3.0</a>
+    <br><br>
+    <a href="#" onclick="openRemovalModal(); return false;">Hai bisogno di rimuovere un contenuto? →</a>
+  </p>
+
+</div>
+
+<!-- Modal Condividi -->
+<div class="modal-backdrop" id="modal" onclick="if(event.target===this) closeModal()">
+  <div class="modal">
+    <h2>Condividi una tua skill</h2>
+    <p class="modal-sub">Pubblicata subito, firmata col tuo nome (o anonima se scegli così). Niente revisione editoriale: il gruppo sa chi sei.</p>
+    <form id="shareForm" onsubmit="submitForm(event)">
+      <div class="form-row">
+        <label>Il tuo nome</label>
+        <input required type="text" name="name" placeholder="Es. Avv. Maria Rossi">
+      </div>
+      <div class="form-row">
+        <label>Email <span class="opt">(opzionale — non pubblicata, serve solo se il maintainer deve contattarti per un problema, es. anonimizzazione mancata)</span></label>
+        <input type="email" name="email" placeholder="maria.rossi@esempio.it">
+      </div>
+      <div class="form-row">
+        <label>Titolo della skill</label>
+        <input required type="text" name="title" placeholder="Es. Bozza ricorso TAR — vizi atto amministrativo">
+      </div>
+      <div class="form-row">
+        <label>Area legale</label>
+        <select required name="area">
+          <option value="">— scegli —</option>
+          <option>civile</option>
+          <option>penale</option>
+          <option>lavoro</option>
+          <option>amministrativo</option>
+          <option>commerciale</option>
+          <option>privacy</option>
+          <option>societario</option>
+          <option>tributario</option>
+          <option>contenzioso</option>
+          <option>ip</option>
+          <option>generale</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>Cosa fa la skill <span class="opt">(2-3 righe, scritte per un collega)</span></label>
+        <textarea required name="desc" placeholder="Spiega in parole semplici cosa ottiene chi la usa."></textarea>
+      </div>
+      <div class="form-row">
+        <label>Contenuto della skill <span class="opt">(le istruzioni che dai a Claude)</span></label>
+        <textarea required class="large" name="content" placeholder="Incolla qui le istruzioni che dai a Claude. Puoi usare il formato che preferisci."></textarea>
+      </div>
+      <div class="form-row">
+        <label>GitHub <span class="opt">(opzionale, se hai un repo)</span></label>
+        <input type="url" name="github" placeholder="https://github.com/…">
+      </div>
+      <div class="form-row">
+        <label>Riferimenti normativi <span class="opt">(opzionale)</span></label>
+        <textarea name="refs" placeholder="Es. Art. 67 TUIR, Cass. n. 12345/2025…"></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" onclick="closeModal()">Annulla</button>
+        <button type="submit" class="btn-primary">Pubblica</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Segnala errore -->
+<div class="modal-backdrop" id="errorModal" onclick="if(event.target===this) closeErrorModal()">
+  <div class="modal">
+    <h2>Segnala un errore dell'AI</h2>
+    <p class="modal-sub">Aiuta i colleghi a non cadere nello stesso problema. Pubblicata subito.</p>
+
+    <div style="background: var(--warn-soft); border-left: 3px solid var(--warn); padding: 12px 14px; border-radius: 6px; margin-bottom: 16px;">
+      <strong style="color: var(--warn); font-size: 13px;">Anonimizza il caso prima di incollarlo.</strong>
+      <p style="margin: 4px 0 8px 0; font-size: 12.5px; color: var(--ink);">
+        Non lasciare nomi di clienti, controparti, numeri di fascicolo. Sostituiscili con pseudonimi coerenti.
+      </p>
+      <a href="https://recode.micheleloi.pro" target="_blank" rel="noopener" style="display: inline-block; background: var(--warn); color: white; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; text-decoration: none;">Apri Recode ↗</a>
+    </div>
+
+    <form id="errorForm" onsubmit="submitError(event)">
+      <div class="form-row">
+        <label>AI che ha sbagliato</label>
+        <select required name="ai">
+          <option value="">— scegli —</option>
+          <option>Claude</option>
+          <option>ChatGPT</option>
+          <option>Copilot</option>
+          <option>Gemini</option>
+          <option>Codex</option>
+          <option>Mistral</option>
+          <option>Altra</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>Area legale</label>
+        <select required name="area">
+          <option value="">— scegli —</option>
+          <option>civile</option>
+          <option>penale</option>
+          <option>lavoro</option>
+          <option>amministrativo</option>
+          <option>commerciale</option>
+          <option>privacy</option>
+          <option>societario</option>
+          <option>tributario</option>
+          <option>contenzioso</option>
+          <option>ip</option>
+          <option>generale</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>Titolo dell'errore <span class="opt">(che cosa ha sbagliato in una riga)</span></label>
+        <input required type="text" name="title" placeholder="Es. Allucinazione di sentenza Cassazione inesistente">
+      </div>
+      <div class="form-row">
+        <label>Descrizione breve <span class="opt">(2-3 righe)</span></label>
+        <textarea required name="desc" placeholder="Contesto del caso, anonimizzato. Cosa stavi chiedendo, cosa ti aspettavi."></textarea>
+      </div>
+      <div class="form-row">
+        <label>Prompt che hai dato <span class="opt">(anonimizzato!)</span></label>
+        <textarea required class="large" name="prompt" placeholder="Incolla qui il prompt o la domanda che hai posto all'AI. ANONIMIZZALO prima."></textarea>
+      </div>
+      <div class="form-row">
+        <label>Risposta errata dell'AI <span class="opt">(anonimizzata!)</span></label>
+        <textarea required class="large" name="wrong" placeholder="Incolla la risposta che è risultata sbagliata. Marca le parti specifiche dell'errore."></textarea>
+      </div>
+      <div class="form-row">
+        <label>Cosa era corretto <span class="opt">(la versione giusta, con riferimenti)</span></label>
+        <textarea required name="correct" placeholder="Spiega cosa l'AI ha sbagliato e qual è la risposta corretta. Cita norme, sentenze, articoli."></textarea>
+      </div>
+      <div class="form-row">
+        <label>Il tuo nome</label>
+        <input required type="text" name="author" placeholder="Es. Avv. Maria Rossi">
+      </div>
+      <div class="form-row">
+        <label>Email <span class="opt">(opzionale — se la metti, riceverai un link per modificare o cancellare la segnalazione in futuro)</span></label>
+        <input type="email" name="email" placeholder="maria.rossi@esempio.it">
+      </div>
+      <div class="form-row anon-row">
+        <input type="checkbox" id="errorAnon" name="anonymous">
+        <label for="errorAnon">
+          Pubblica la segnalazione anonima
+          <span class="anon-note">Il tuo nome non appare pubblicamente. Usa se il caso anonimizzato è ancora riconducibile a uno specifico cliente.</span>
+        </label>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" onclick="closeErrorModal()">Annulla</button>
+        <button type="submit" class="btn-primary">Pubblica</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Scrivi recensione -->
+<div class="modal-backdrop" id="reviewModal" onclick="if(event.target===this) closeReviewModal()">
+  <div class="modal">
+    <h2>Scrivi una recensione</h2>
+    <p class="modal-sub" id="reviewSubtitle">Per la skill: —</p>
+    <form id="reviewForm" onsubmit="submitReview(event)">
+      <div class="form-row">
+        <label>Valutazione</label>
+        <div class="star-picker" id="starPicker">
+          <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
+        </div>
+        <input type="hidden" name="stars" id="starsValue" value="0" required>
+      </div>
+      <div class="form-row">
+        <label>La tua recensione</label>
+        <textarea required name="text" placeholder="Come l'hai usata? Su che caso? Cosa ha funzionato, cosa no?"></textarea>
+      </div>
+      <div class="form-row">
+        <label>Il tuo nome</label>
+        <input required type="text" name="author" placeholder="Es. Avv. Maria Rossi">
+      </div>
+      <div class="form-row">
+        <label>Email <span class="opt">(opzionale — se la metti, riceverai un link per modificare o cancellare la recensione in futuro)</span></label>
+        <input type="email" name="email" placeholder="maria.rossi@esempio.it">
+      </div>
+      <div class="form-row anon-row">
+        <input type="checkbox" id="reviewAnon" name="anonymous">
+        <label for="reviewAnon">
+          Pubblica la recensione anonima
+          <span class="anon-note">Il tuo nome non appare pubblicamente. Usa solo se c'è una ragione concreta — recensioni firmate hanno più peso.</span>
+        </label>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" onclick="closeReviewModal()">Annulla</button>
+        <button type="submit" class="btn-primary">Pubblica</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Richiesta rimozione contenuto -->
+<div class="modal-backdrop" id="removalModal" onclick="if(event.target===this) closeRemovalModal()">
+  <div class="modal">
+    <h2>Richiesta di rimozione contenuto</h2>
+    <p class="modal-sub">Usa questo modulo se devi togliere una skill, recensione o segnalazione errore già pubblicata — per esempio perché hai dimenticato di anonimizzare un caso, o per qualsiasi altro motivo. La richiesta arriva al maintainer del prototipo, che valuta e rimuove.</p>
+    <form id="removalForm" onsubmit="submitRemoval(event)">
+      <div class="form-row">
+        <label>Identificativo o URL del contenuto da rimuovere</label>
+        <input required type="text" name="ref" placeholder="Es. 'recensione di Avv. Bianchi alla skill TFR' oppure incolla l'URL">
+      </div>
+      <div class="form-row">
+        <label>Motivazione</label>
+        <textarea required name="reason" placeholder="Es. 'ho pubblicato l'errore senza anonimizzare il nome del cliente'"></textarea>
+      </div>
+      <div class="form-row">
+        <label>La tua email <span class="opt">(per ricevere conferma quando la rimozione è fatta)</span></label>
+        <input type="email" name="from" placeholder="tua.email@esempio.it">
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" onclick="closeRemovalModal()">Annulla</button>
+        <button type="submit" class="btn-primary">Invia richiesta</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast">Skill pubblicata. Grazie per il contributo.</div>
+
+<script>
+// ============================================================
+// Backend config — sostituiti dal maintainer prima del push
+// ============================================================
+const SUPABASE_URL = "https://gqapjxcakjnysapdffgd.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_6i78R3RgtonWVrzNYpHeGQ_jHO_zebZ";
+const BACKEND_ENABLED = !SUPABASE_URL.includes("PLACEHOLDER");
+
+function sbHeaders() {
+  return {
+    "apikey": SUPABASE_ANON_KEY,
+    "Authorization": "Bearer " + SUPABASE_ANON_KEY,
+    "Content-Type": "application/json",
+  };
+}
+
+async function sbGet(path) {
+  const res = await fetch(SUPABASE_URL + "/rest/v1/" + path, {
+    headers: sbHeaders(),
+  });
+  if (!res.ok) throw new Error("sbGet " + path + " → " + res.status);
+  return res.json();
+}
+
+async function sbInsert(table, row) {
+  const res = await fetch(SUPABASE_URL + "/rest/v1/" + table, {
+    method: "POST",
+    headers: { ...sbHeaders(), "Prefer": "return=representation" },
+    body: JSON.stringify(row),
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error("sbInsert " + table + " → " + res.status + " " + err);
+  }
+  return res.json();
+}
+
+async function sbFunction(name, body) {
+  const res = await fetch(SUPABASE_URL + "/functions/v1/" + name, {
+    method: "POST",
+    headers: sbHeaders(),
+    body: JSON.stringify(body),
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(json.error || ("Errore funzione " + name + " (" + res.status + ")"));
+  return json;
+}
+
+// Fingerprint browser per anti-doppio-voto (no PII, hash deterministico locale)
+function getVoterFingerprint() {
+  let fp = localStorage.getItem("ssg_voter_fp");
+  if (!fp) {
+    fp = "fp-" + Math.random().toString(36).slice(2, 10) + "-" + Date.now().toString(36);
+    localStorage.setItem("ssg_voter_fp", fp);
+  }
+  return fp;
+}
+
+const AREE = ["civile","penale","lavoro","amministrativo","commerciale","privacy","societario","tributario","contenzioso","ip","generale"];
+
+const SKILLS = [
+  {
+    id: "costituzione-parte-civile",
+    title: "Costituzione di parte civile — scheletro atto",
+    author: "Avv. Maria Rossi",
+    area: "penale",
+    desc: "Genera lo scheletro dell'atto di costituzione di parte civile partendo dai dati del fascicolo, con campi da completare e check delle decadenze.",
+    content: `---
+name: costituzione-parte-civile
+description: Scheletro atto di costituzione di parte civile (art. 76 c.p.p.) con check decadenze.
+when_to_use: Quando l'avvocato sta preparando una costituzione di parte civile e vuole un primo scheletro da editare.
+---
+
+Sei assistente di uno studio penalista italiano.
+
+Quando l'avvocato ti fornisce:
+- estremi del procedimento (RG, GIP, GUP)
+- generalità della persona offesa
+- imputato/i + capo di imputazione
+
+Produci uno scheletro dell'atto di costituzione di parte civile contenente:
+1. Intestazione (Tribunale, RG, parti)
+2. Premesso in fatto (max 10 righe, neutro)
+3. Danno patrimoniale e non patrimoniale (paragrafi separati)
+4. Conclusioni (richieste risarcitorie + spese)
+
+Marca con [VERIFICA] ogni passaggio che richiede controllo formale (termini, decadenze, art. 79 c.p.p.).
+
+NON inventare giurisprudenza. Se citi sentenze, cita solo quelle che l'avvocato ti ha fornito.`,
+    references: "Art. 76, 78, 79 c.p.p. [VERIFICA termini ex art. 79]",
+  },
+
+  {
+    id: "riassunto-cassazione-5-punti",
+    title: "Riassunto sentenza Cassazione in 5 punti",
+    author: "Avv. Luca Bianchi",
+    area: "civile",
+    desc: "Estrae da una sentenza di Cassazione i 5 punti essenziali (fattispecie, principio di diritto, rationale, precedenti citati, ricadute pratiche).",
+    content: `---
+name: riassunto-cassazione-5-punti
+description: Riassume una sentenza Cassazione civile in 5 punti standardizzati per consultazione rapida.
+when_to_use: Quando l'avvocato carica una sentenza Cassazione e chiede un riassunto strutturato per uso interno studio.
+---
+
+Sei assistente di uno studio civilista italiano.
+
+Quando l'avvocato ti fornisce il testo (o estratto) di una sentenza Cassazione, produci:
+
+**1. Fattispecie** (3-5 righe). Solo i fatti rilevanti, niente commento.
+**2. Principio di diritto** (1-2 righe). La massima, parafrasata se la sentenza non la enuncia espressamente.
+**3. Rationale** (5-8 righe). Il ragionamento che porta al principio.
+**4. Precedenti citati** (elenco numero + anno).
+**5. Ricadute pratiche** (2-4 righe). Come usare il principio in difesa o ricorso.
+
+Non aggiungere precedenti che non sono nel testo fornito. Se la sentenza è incompleta, segnala cosa manca.`,
+    references: null,
+  },
+
+  {
+    id: "tfr-contributi-inps",
+    title: "Calcolo TFR + contributi INPS",
+    author: "Avv. Anna Verdi",
+    area: "lavoro",
+    desc: "Guida l'avvocato nel calcolo del TFR e dei contributi INPS dovuti, con check incrociato dei coefficienti annuali e segnalazione delle voci dubbie.",
+    content: `---
+name: tfr-contributi-inps
+description: Calcolo TFR + contributi INPS per causa lavoro, con coefficienti annuali e check voci dubbie.
+when_to_use: Quando l'avvocato deve quantificare TFR e contributi in atto di causa o trattativa stragiudiziale.
+---
+
+Sei assistente di uno studio giuslavorista italiano.
+
+Chiedi all'avvocato (uno per volta, non tutti insieme):
+1. Data di assunzione e data di cessazione
+2. Retribuzione utile annua per ciascun anno (RAL lorda)
+3. CCNL applicato
+4. Eventuali anticipazioni TFR già erogate
+
+Poi:
+- Per ogni anno calcola la quota TFR (RAL / 13,5)
+- Applica la rivalutazione annua (1,5% fisso + 75% indice ISTAT [VERIFICA tabella anno per anno])
+- Mostra il totale lordo TFR + lordo cumulativo
+- Per i contributi: calcola aliquote aliquote IVS sui minimali del CCNL [VERIFICA aliquote anno per anno]
+
+Segnala come [DUBBIO] ogni voce dove il dato fornito sembra incongruo (es. RAL inferiore al minimale CCNL).`,
+    references: "Coefficienti rivalutazione ISTAT annuali [VERIFICA]; Tabelle contributive INPS [VERIFICA]",
+  },
+
+  {
+    id: "ricorso-tar-vizi",
+    title: "Bozza ricorso TAR — vizi atto amministrativo",
+    author: "Avv. Pietro Conti",
+    area: "amministrativo",
+    desc: "Produce la bozza dei motivi di ricorso al TAR partendo dall'atto impugnato e dall'interesse leso, mappando i vizi tipici della L. 241/1990.",
+    content: `---
+name: ricorso-tar-vizi
+description: Bozza motivi di ricorso TAR mappati sui vizi della L. 241/1990 + check termini.
+when_to_use: Quando l'avvocato impugna un atto amministrativo e vuole una prima mappatura dei vizi da contestare.
+---
+
+Sei assistente di uno studio amministrativista italiano.
+
+L'avvocato ti fornisce:
+- l'atto impugnato (testo o estratto)
+- l'interesse leso del proprio assistito
+- la data di notifica/conoscenza dell'atto
+
+Tu produci:
+1. **Check termini decadenziali** [VERIFICA art. 29 c.p.a., 60 gg dalla notifica]
+2. **Mappatura vizi possibili** — per ciascuno indica se c'è materiale nell'atto per contestarlo:
+   - Incompetenza
+   - Violazione di legge (specifica quale)
+   - Eccesso di potere (figure sintomatiche: travisamento, illogicità, sviamento, disparità)
+3. **Bozza motivi di ricorso** — un motivo per ciascun vizio robusto, max 1 pagina per motivo, struttura: (a) premessa fattuale, (b) norma violata, (c) come l'atto la viola, (d) conseguenza giuridica.
+
+NON inventare normativa di settore. Se serve normativa speciale che non conosci, segnala [VERIFICA NORMATIVA SETTORIALE].`,
+    references: "L. 241/1990 art. 21-octies; D.Lgs. 104/2010 (c.p.a.) art. 29 [VERIFICA termini]",
+  },
+
+  {
+    id: "clausola-arbitrale-icc",
+    title: "Analisi clausola arbitrale ICC",
+    author: "Avv. Giulia Romano",
+    area: "commerciale",
+    desc: "Analizza una clausola arbitrale ICC contro la model clause 2021 e segnala criticità (sede, lingua, numero arbitri, legge applicabile, escalation).",
+    content: `---
+name: clausola-arbitrale-icc
+description: Analisi clausola arbitrale ICC vs model clause 2021 — segnala criticità e suggerisce wording.
+when_to_use: Quando l'avvocato sta negoziando o reviewing una clausola arbitrale ICC in un contratto commerciale internazionale.
+---
+
+Sei assistente di uno studio commercialista italiano specializzato in arbitrato internazionale.
+
+L'avvocato ti fornisce la clausola da analizzare. Tu produci:
+
+1. **Confronto con ICC Model Clause 2021** — quali elementi mancano, quali sono ambigui.
+2. **Check elementi essenziali**:
+   - Sede dell'arbitrato (problema giurisdizionale se non specificata)
+   - Numero arbitri (1 o 3; default ICC è 1 sotto certi importi)
+   - Lingua del procedimento
+   - Legge applicabile al merito
+   - Legge applicabile alla clausola arbitrale (separabilità)
+   - Procedura di scelta arbitri
+   - Confidenzialità (NON è default ICC, va aggiunta)
+3. **Multi-tier dispute resolution** — se la clausola prevede mediazione/negoziazione preventiva, check coerenza tempi.
+4. **Wording suggerito** per le criticità trovate, in inglese.
+
+Riferimenti: ICC Arbitration Rules 2021 [VERIFICA versione corrente]; New York Convention 1958 per enforcement.`,
+    references: "ICC Arbitration Rules 2021 [VERIFICA aggiornamenti]; Convenzione New York 1958",
+    github: "https://github.com/example/icc-clause-analyzer",
+  },
+
+  {
+    id: "dpa-art28-gdpr",
+    title: "Check DPA art. 28 GDPR",
+    author: "Avv. Marco Ferrari",
+    area: "privacy",
+    desc: "Verifica che un Data Processing Agreement contenga tutte le clausole obbligatorie ex art. 28 GDPR e segnala mancanze + clausole rischiose.",
+    content: `---
+name: dpa-art28-gdpr
+description: Verifica DPA contro requisiti art. 28 GDPR + segnala clausole mancanti o rischiose.
+when_to_use: Quando l'avvocato deve fare review veloce di un DPA proposto da un fornitore (tipico cliente PMI).
+---
+
+Sei assistente di uno studio specializzato in privacy/data protection italiano-europeo.
+
+L'avvocato ti fornisce il testo del DPA. Tu produci:
+
+**Check art. 28(3) GDPR** — per ciascuno: PRESENTE / MANCANTE / AMBIGUO
+- (a) Oggetto, durata, natura, finalità del trattamento
+- (b) Tipo di dati e categorie di interessati
+- (c) Istruzioni documentate del titolare
+- (d) Obbligo riservatezza del personale
+- (e) Misure di sicurezza ex art. 32
+- (f) Subprocessors (consenso preventivo + flow-down)
+- (g) Assistenza al titolare per diritti interessati
+- (h) Assistenza per breach notification + DPIA
+- (i) Restituzione/cancellazione dati a fine contratto
+- (j) Audit + ispezioni
+
+**Clausole rischiose comuni**:
+- Trasferimenti extra-UE senza SCC 2021 → [ALERT]
+- Subprocessor "general approval" senza lista → [WARN]
+- Liability cap del processor su breach GDPR → [WARN]
+- Audit limitato a "third-party report" → [DUBBIO]
+
+NON inventare casi di Autorità Garante. Se citi sanzioni, citane solo di cui hai certezza.`,
+    references: "Reg. UE 2016/679 art. 28; SCC 2021 (Dec. UE 2021/914); Linee guida EDPB 07/2020",
+    github: "https://github.com/example/dpa-art28-checker",
+  },
+
+  {
+    id: "antiriciclaggio-cliente-nuovo",
+    title: "Verifica antiriciclaggio cliente nuovo",
+    author: "Avv. Sofia Marini",
+    area: "societario",
+    desc: "Guida l'avvocato nell'adeguata verifica del cliente ex D.Lgs. 231/2007 con domande mirate al profilo di rischio e check su titolare effettivo.",
+    content: `---
+name: antiriciclaggio-cliente-nuovo
+description: Adeguata verifica cliente ex D.Lgs. 231/2007 per studio legale.
+when_to_use: Quando l'avvocato apre un nuovo cliente e deve fare la KYC obbligatoria.
+---
+
+Sei assistente di uno studio legale italiano che assolve obblighi antiriciclaggio.
+
+Chiedi all'avvocato uno per uno (non tutti insieme):
+1. Persona fisica o giuridica?
+2. Nome/ragione sociale + paese di residenza/sede
+3. Tipo prestazione richiesta (consulenza, contenzioso, M&A, immobiliare…)
+
+Se persona giuridica:
+4. Forma societaria + visura camerale disponibile?
+5. Titolare effettivo identificato (≥25% o controllo)?
+6. Catena di controllo trasparente o presenza di trust/fiduciarie?
+
+Poi produci:
+**Profilo rischio**: BASSO / MEDIO / ALTO con motivazione (3-5 righe)
+**Documenti da raccogliere**: lista
+**Adeguata verifica**: semplificata / ordinaria / rafforzata (con motivazione)
+**Red flag eventuali**: paese ad alto rischio, struttura opaca, importi sproporzionati, ecc.
+**Quando segnalare** (SOS al UIF) — solo se emergono sospetti concreti.
+
+NON sostituire il giudizio dell'avvocato sulla SOS. Fornisci elementi, lui decide.`,
+    references: "D.Lgs. 231/2007; Provvedimento UIF 12/05/2023 [VERIFICA aggiornamenti]; Reg. UE 2024/1624 (in vigore graduale)",
+  },
+
+  {
+    id: "plusvalenza-immobiliare-67-tuir",
+    title: "Plusvalenza immobiliare ex art. 67 TUIR",
+    author: "Avv. Davide Conti",
+    area: "tributario",
+    desc: "Calcola la plusvalenza tassabile su cessione immobile ex art. 67 lett. b) TUIR, considerando il quinquennio, le esenzioni e l'opzione imposta sostitutiva 26%.",
+    content: `---
+name: plusvalenza-immobiliare-67-tuir
+description: Calcolo plusvalenza immobiliare art. 67 lett. b) TUIR + opzioni imposta sostitutiva.
+when_to_use: Quando il cliente cede un immobile e l'avvocato deve quantificare l'eventuale plusvalenza tassabile.
+---
+
+Sei assistente di uno studio tributarista italiano.
+
+Chiedi all'avvocato:
+1. Data di acquisto + costo + spese accessorie documentate
+2. Data di cessione + corrispettivo
+3. Modalità di acquisto (compravendita, successione, donazione)
+4. Uso dell'immobile (prima casa per > 50% del periodo? affitto? sfitto?)
+5. Lavori di ristrutturazione documentati ex art. 68 TUIR?
+
+Poi produci:
+**Verifica esenzione**:
+- Possesso > 5 anni? → esente (no plusvalenza)
+- Acquisto per successione? → sempre esente
+- Prima casa adibita ad abitazione principale del cedente o famiglia per > 50% del periodo? → esente
+- Possesso < 5 anni + niente delle esenzioni? → plusvalenza tassabile
+
+**Calcolo plusvalenza** (se tassabile):
+Plusvalenza = corrispettivo − costo storico aggiornato (ISTAT) − spese accessorie acquisto − ristrutturazione documentata.
+
+**Opzioni regime fiscale**:
+- IRPEF ordinario (scaglioni) sul valore
+- Imposta sostitutiva 26% ex art. 1 c. 496 L. 266/2005 [VERIFICA opzione esercitabile dal notaio in atto]
+
+Mostra entrambe le opzioni con risparmio stimato.
+
+NON dare consulenza fiscale finale. L'avvocato verifica con commercialista.`,
+    references: "DPR 917/86 (TUIR) art. 67 lett. b), art. 68; L. 266/2005 art. 1 c. 496 [VERIFICA aliquote]",
+  },
+
+  {
+    id: "nda-bilingue-it-en",
+    title: "Drafting NDA bilingue IT-EN",
+    author: "Avv. Elena Russo",
+    area: "commerciale",
+    desc: "Genera bozza NDA bilingue italiano-inglese con clausole reciproche, durata, eccezioni standard e foro competente, in versione one-way o mutual.",
+    content: `---
+name: nda-bilingue-it-en
+description: NDA bilingue IT-EN (mutual o one-way) per trattative commerciali B2B.
+when_to_use: Quando l'avvocato deve produrre un NDA da scambiare con controparte estera B2B nei prossimi 30 minuti.
+---
+
+Sei assistente di uno studio commercialista italiano.
+
+Chiedi all'avvocato:
+1. One-way (solo una parte rivela) o mutual (entrambe)?
+2. Parti (denominazione, sede, P.IVA/VAT)
+3. Finalità della disclosure (3 righe)
+4. Durata obbligo riservatezza (default 3 anni)
+5. Legge applicabile (default Italia) + foro competente
+6. Penale specifica richiesta? Liquidated damages?
+
+Poi produci:
+**NDA bilingue**, due colonne (IT a sinistra, EN a destra), articoli:
+1. Definizione informazioni riservate (+ esclusioni standard)
+2. Obblighi del ricevente (use limitation, need-to-know)
+3. Eccezioni (already known, public domain, independently developed, required by law)
+4. Durata + restituzione/distruzione a fine trattativa
+5. No license / no obligation to contract
+6. Rimedi (injunctive relief + damages)
+7. Legge applicabile + foro
+8. Boilerplate (entire agreement, amendments, severability, counterparts)
+
+Wording inglese: legal English standard, no Latin tag superflui.
+
+NON inserire clausole non richieste dall'avvocato (es. non-solicit, non-compete). Quelle sono separate.`,
+    references: null,
+  },
+
+  {
+    id: "eccezioni-opp-ingiuntivo",
+    title: "Eccezioni opposizione ingiuntivo",
+    author: "Avv. Tommaso Greco",
+    area: "civile",
+    desc: "Mappa le eccezioni proponibili in opposizione a decreto ingiuntivo ex art. 645 c.p.c., distinguendo merito, prescrizione e nullità del decreto.",
+    content: `---
+name: eccezioni-opp-ingiuntivo
+description: Mappa eccezioni in opposizione a decreto ingiuntivo art. 645 c.p.c.
+when_to_use: Quando l'avvocato deve impostare l'atto di opposizione a decreto ingiuntivo nei termini.
+---
+
+Sei assistente di uno studio civilista italiano.
+
+L'avvocato ti fornisce:
+- Decreto ingiuntivo (estremi, importo, causale, prove monitorie addotte)
+- Posizione del proprio assistito (debitore opposto)
+- Documenti disponibili
+
+Tu produci:
+
+**1. Check termini opposizione** [VERIFICA art. 641 c.p.c., 40 gg dalla notifica per residenti in Italia]
+
+**2. Eccezioni di merito** (per ciascuna: c'è materiale?):
+- Inesistenza del credito (mai sorto)
+- Estinzione del credito (pagato, transatto, compensato)
+- Inesigibilità (condizione, termine, eccezione di inadempimento)
+- Vizio della prestazione che fonda il credito
+
+**3. Eccezioni di prescrizione**:
+- Prescrizione ordinaria 10 anni o speciale (5 prov. servizi, 3 prov. di settore, 1 anno onorari professionali specifici) [VERIFICA art. 2946-2961 c.c.]
+
+**4. Vizi del decreto**:
+- Difetto di prova scritta ex art. 633-634 c.p.c.
+- Mancanza requisiti decreto (importo, controparte, motivazione)
+- Incompetenza per valore o territorio
+
+**5. Provvisoria esecuzione**:
+- Se già concessa: chiedere sospensione ex art. 649 c.p.c. (gravi motivi)
+- Se non concessa: contestarla in caso di richiesta opposta
+
+NON inventare giurisprudenza. Cita solo se l'avvocato fornisce precedenti.`,
+    references: "Art. 633-650 c.p.c.; Art. 2946-2961 c.c. (prescrizioni)",
+  },
+];
+
+// ===== Seed reviews + updated_at (~3-5 per skill, mix firmate/anonime, mix positive/critiche) =====
+const REVIEW_SEEDS = {
+  "costituzione-parte-civile": [
+    { author: "Avv. Federico Lazzari", anon: false, stars: 5, date: "2026-05-22", text: "Usata su un caso di lesioni gravi. Lo scheletro è ben strutturato, mi sono solo dovuto sistemare la parte sul danno biologico differenziale. Risparmio di ~2 ore.", helpful: 7 },
+    { author: "Avv. Chiara Bertolini", anon: false, stars: 4, date: "2026-05-15", text: "Buon punto di partenza. Il check delle decadenze è onesto, marca con [VERIFICA] dove serve guardare la giurisprudenza locale. Ridurrei la sezione conclusioni che è troppo standard.", helpful: 4 },
+    { author: null, anon: true, stars: 3, date: "2026-05-10", text: "Ottima per chi non l'ha mai fatto, ma su casi seri va riscritta quasi tutta. Funziona meglio come checklist mentale che come bozza vera.", helpful: 9 },
+    { author: "Avv. Marco Pulizzi", anon: false, stars: 5, date: "2026-04-28", text: "L'ho integrata nel mio workflow standard. Specialmente la struttura del danno patrimoniale è solida.", helpful: 3 },
+  ],
+  "riassunto-cassazione-5-punti": [
+    { author: "Avv. Sara Domenicali", anon: false, stars: 5, date: "2026-05-25", text: "La uso ogni mattina per il triage di sentenze. I 5 punti standard sono perfetti per la rassegna interna di studio. Indispensabile.", helpful: 18 },
+    { author: "Avv. Tommaso Greco", anon: false, stars: 4, date: "2026-05-18", text: "Funziona molto bene sulle sentenze sostanziali. Su quelle processuali a volte la parte 'ricadute pratiche' diventa banale.", helpful: 6 },
+    { author: "Avv. Paola Esposito", anon: false, stars: 5, date: "2026-05-12", text: "Ottimo l'avviso quando i precedenti non sono nel testo. Mi ha salvato due volte dall'incollare massime confabulate.", helpful: 12 },
+    { author: null, anon: true, stars: 2, date: "2026-05-04", text: "Su sentenze brevi tende a gonfiare. Per un decreto di rigetto di 4 pagine i '5 punti' sono ridondanti. Andrebbe parametrizzata.", helpful: 5 },
+    { author: "Avv. Luca Rocca", anon: false, stars: 5, date: "2026-04-30", text: "Pulita, prevedibile, copiabile. Esattamente quello che serve in studio.", helpful: 2 },
+  ],
+  "tfr-contributi-inps": [
+    { author: "Avv. Elena Castiglia", anon: false, stars: 4, date: "2026-05-20", text: "Buona. Il check 'dato incongruo' ha pescato due RAL sotto minimale che avevo trascritto male. La rivalutazione [VERIFICA] è onesta.", helpful: 8 },
+    { author: null, anon: true, stars: 2, date: "2026-05-12", text: "Le aliquote contributive che propone sono di due anni fa per il mio CCNL. Il [VERIFICA] c'è ma non basta — un avvocato giuslavorista esperto se ne accorge, un giovane no.", helpful: 14 },
+    { author: "Avv. Riccardo Sambin", anon: false, stars: 4, date: "2026-04-25", text: "Utile per il calcolo lordo. Per la quantificazione netta finale uso comunque il commercialista.", helpful: 3 },
+  ],
+  "ricorso-tar-vizi": [
+    { author: "Avv. Alessandra Pomelli", anon: false, stars: 5, date: "2026-05-21", text: "La mappatura per figure sintomatiche dell'eccesso di potere è didattica e pratica al tempo stesso. La uso anche con i tirocinanti.", helpful: 11 },
+    { author: "Avv. Giorgio Tartaglia", anon: false, stars: 4, date: "2026-05-09", text: "Solida sull'impianto. Sui ricorsi in materia urbanistica andrebbe specializzata — il vizio motivazionale lì ha sue specificità.", helpful: 5 },
+    { author: null, anon: true, stars: 3, date: "2026-05-02", text: "Funziona bene su atti puntuali. Su atti complessi tipo bandi di gara è troppo generica.", helpful: 7 },
+  ],
+  "clausola-arbitrale-icc": [
+    { author: "Avv. Beatrice Mancuso", anon: false, stars: 5, date: "2026-05-24", text: "Sul corporate cross-border è uno strumento incredibile. Il check separabilità + lingua + sede mi ha evitato due clausole patologiche in chiusura.", helpful: 9 },
+    { author: "Avv. Francesco Lipari", anon: false, stars: 5, date: "2026-05-15", text: "Suggested wording in inglese pulito, no Latin tags inutili. Esattamente come la userei in studio.", helpful: 4 },
+    { author: null, anon: true, stars: 3, date: "2026-05-07", text: "Buona su ICC. Sui regolamenti di altre istituzioni (LCIA, HKIAC, SIAC) inevitabilmente non aiuta. Vorrei una skill gemella su quelle.", helpful: 8 },
+  ],
+  "dpa-art28-gdpr": [
+    { author: "Avv. Cristina Pellizzari", anon: false, stars: 5, date: "2026-05-23", text: "L'ho usata su 14 DPA in due settimane. Il flag su 'subprocessor general approval senza lista' ha sempre pescato — è il tipico cavallo di Troia dei vendor SaaS USA.", helpful: 22 },
+    { author: "Avv. Davide Spagnoletti", anon: false, stars: 4, date: "2026-05-11", text: "Molto utile. La check sul Liability cap del processor è una sezione che si dimentica sempre nelle review veloci.", helpful: 7 },
+    { author: null, anon: true, stars: 4, date: "2026-05-01", text: "Trovata la sezione [ALERT] su trasferimenti extra-UE senza SCC ben costruita. Su SCC 2021 vs nuove TIA però non distingue, e dovrebbe.", helpful: 6 },
+    { author: "Avv. Martina Ferrer", anon: false, stars: 5, date: "2026-04-22", text: "Ottimo per il primo screening. Una review approfondita richiede comunque expertise umana ma la skill fa il 70% del lavoro.", helpful: 3 },
+  ],
+  "antiriciclaggio-cliente-nuovo": [
+    { author: null, anon: true, stars: 4, date: "2026-05-19", text: "Le domande sequenziali (una alla volta, non tutte insieme) sono il punto forte. È esattamente come faccio io con un cliente in studio.", helpful: 13 },
+    { author: "Avv. Carlo Tessari", anon: false, stars: 4, date: "2026-05-08", text: "Il framing 'forniamo elementi, l'avvocato decide la SOS' è corretto. Su questo la skill è onesta — altre ne ho viste che 'concludono'.", helpful: 9 },
+    { author: "Avv. Ilaria Volpi", anon: false, stars: 3, date: "2026-04-27", text: "Da aggiornare con il Reg. UE 2024/1624. Cita il fatto che è in vigore graduale ma non specifica quali parti già applicabili.", helpful: 11 },
+  ],
+  "plusvalenza-immobiliare-67-tuir": [
+    { author: "Avv. Salvatore Mancuso", anon: false, stars: 5, date: "2026-05-22", text: "Il confronto IRPEF vs imposta sostitutiva 26% con il risparmio stimato è molto utile in fase di trattativa col cliente. Trasparente.", helpful: 8 },
+    { author: "Avv. Roberta Quartana", anon: false, stars: 4, date: "2026-05-13", text: "Check delle esenzioni completo. La condizione 'prima casa adibita > 50% del periodo' la dimentico sempre, qui la fa lei.", helpful: 5 },
+    { author: null, anon: true, stars: 3, date: "2026-04-30", text: "Va incrociata col commercialista. Da sola non basta per dare advice fiscale al cliente — ma la skill stessa lo dice, quindi è onesta.", helpful: 4 },
+  ],
+  "nda-bilingue-it-en": [
+    { author: "Avv. Elena Russo", anon: false, stars: 5, date: "2026-05-26", text: "L'ho scritta io ed è la mia favorita 😄 Sul one-way + mutual la struttura a colonne IT-EN è chiarissima per le controparti USA/UK.", helpful: 16 },
+    { author: "Avv. Stefania Trentini", anon: false, stars: 5, date: "2026-05-17", text: "Il fatto che NON inserisca clausole non richieste (non-solicit, non-compete) è una virtù enorme. Altri tool li ficcano dentro 'di default' creando casini.", helpful: 9 },
+    { author: "Avv. Pietro Lombardi", anon: false, stars: 4, date: "2026-05-04", text: "Wording inglese di buon livello. Per chi negozia con tedeschi vorrei una variante DE-EN; per ora la uso come scaffold e adatto.", helpful: 6 },
+  ],
+  "eccezioni-opp-ingiuntivo": [
+    { author: "Avv. Riccardo Manai", anon: false, stars: 5, date: "2026-05-25", text: "La mappa per prescrizione (ordinaria 10 / speciali 5/3/1) è precisa e il [VERIFICA] sulle prescrizioni speciali è ben piazzato.", helpful: 14 },
+    { author: null, anon: true, stars: 4, date: "2026-05-14", text: "Su vizi del decreto è completa. Sulla sospensione 649 c.p.c. potrebbe approfondire la giurisprudenza recente su 'gravi motivi' — ma il [VERIFICA] c'è.", helpful: 7 },
+    { author: "Avv. Anna Carraro", anon: false, stars: 5, date: "2026-05-06", text: "L'ho usata per impostare 5 opposizioni in un mese. È il mio scaffold standard ora.", helpful: 4 },
+    { author: null, anon: true, stars: 2, date: "2026-04-28", text: "Manca la sezione sull'opposizione tardiva ex art. 650 c.p.c. — non grave perché casi rari, ma per essere completa andrebbe aggiunta.", helpful: 9 },
+  ],
+};
+
+function seedReviews() {
+  SKILLS.forEach(s => {
+    s.reviews = REVIEW_SEEDS[s.id] || [];
+    // updated_at = most recent review date (or null if no reviews)
+    s.updated_at = s.reviews.length ? s.reviews.map(r => r.date).sort().pop() : null;
+  });
+}
+seedReviews();
+
+// ===== AI tools tassonomia =====
+const AI_TOOLS = ["Claude", "ChatGPT", "Copilot", "Gemini", "Codex", "Mistral", "Altra"];
+
+// ===== ERRORI dataset =====
+const ERRORS = [
+  {
+    id: "claude-cassazione-inesistente",
+    title: "Claude inventa Cass. n. 18432/2024 inesistente",
+    author: "Avv. Federico Bertini",
+    anon: false,
+    ai: "Claude",
+    area: "civile",
+    date: "2026-05-28",
+    reported: 23,
+    desc: "Chiedendo precedenti sulla responsabilità solidale ex art. 2055 c.c., Claude ha citato una Cass. n. 18432/2024 con massima plausibile ma la sentenza NON esiste sui banche dati ufficiali.",
+    prompt: "Cerca precedenti recenti della Cassazione civile sulla responsabilità solidale ex art. 2055 c.c. in caso di concorso di colpa di più professionisti (es. avvocato + commercialista). Dammi la massima esatta e il numero.",
+    wrong: "Recentemente la Cassazione si è pronunciata con sentenza n. 18432 del 14 marzo 2024, sez. III civile, che ha statuito: \"Nel caso di concorso di colpa tra più professionisti, la responsabilità solidale ex art. 2055 c.c. opera anche quando le condotte siano causalmente autonome ma convergenti nel produrre il danno...\". (sentenza Cass. 18432/2024)",
+    correct: "La sentenza Cass. n. 18432/2024 NON esiste. Verificato su DeJure, Cassazione Italgiure, Foro Italiano. La massima citata è plausibile ma fabbricata. Il principio sostanziale citato è in realtà espresso in Cass. SU n. 581/2008 (vera), ma il riferimento puntuale è inventato. INSEGNAMENTO: chiedere SEMPRE a Claude di citare solo precedenti che hai tu fornito; non farti dare numeri di sentenza inventati.",
+    references: "Cass. SU n. 581/2008 (vera, citarla così); Art. 2055 c.c.",
+  },
+  {
+    id: "chatgpt-aliquota-irpef-2024",
+    title: "ChatGPT-4 sbaglia scaglione IRPEF 2024",
+    author: null,
+    anon: true,
+    ai: "ChatGPT",
+    area: "tributario",
+    date: "2026-05-24",
+    reported: 18,
+    desc: "Chiedendo l'aliquota IRPEF 2024 per redditi tra 28k e 50k, ChatGPT applica lo scaglione 27% (pre-riforma 2024) invece del nuovo 35% unificato 28k-50k.",
+    prompt: "Quale aliquota IRPEF si applica nel 2024 a un reddito imponibile di 42.000 euro?",
+    wrong: "Nel 2024 il reddito di 42.000 euro rientra nello scaglione 27% applicato ai redditi tra 15.001 e 50.000 euro. L'IRPEF si calcola: primi 15.000 al 23% + eccedenza fino a 28.000 al 25% + eccedenza fino a 42.000 al 27%.",
+    correct: "Errore: ChatGPT applica scaglioni 2023, non 2024. La Legge 30 dicembre 2023 n. 213 (Legge di bilancio 2024) ha riformato gli scaglioni: 23% fino a 28.000, 35% da 28.001 a 50.000, 43% oltre 50.000. Per 42.000 euro: (28.000 × 23%) + (14.000 × 35%) = 6.440 + 4.900 = 11.340 IRPEF lorda. Differenza vs calcolo ChatGPT: ~600 euro. INSEGNAMENTO: per parametri fiscali che cambiano anno per anno, verificare SEMPRE l'anno di knowledge cutoff del modello e incrociare con Agenzia Entrate.",
+    references: "Legge 213/2023 art. 1 c. 1; D.L. 216/2023 (decreto attuativo riforma IRPEF) [VERIFICA aggiornamenti successivi]",
+  },
+  {
+    id: "copilot-concussione-corruzione",
+    title: "Copilot confonde concussione e corruzione propria",
+    author: "Avv. Paolo Marchesi",
+    anon: false,
+    ai: "Copilot",
+    area: "penale",
+    date: "2026-05-19",
+    reported: 14,
+    desc: "Chiedendo l'esatta qualificazione di una condotta del pubblico ufficiale che 'induce' (non costringe) il privato a dare denaro, Copilot risponde 'concussione' ex art. 317 c.p., dimenticando la riforma 2012 che ha spostato l'induzione indebita all'art. 319-quater.",
+    prompt: "Il pubblico ufficiale che induce il privato a dargli denaro promettendo in cambio un atto del suo ufficio: che reato è? Cita l'articolo del codice penale.",
+    wrong: "Si tratta di concussione, reato previsto dall'art. 317 c.p. La concussione si configura quando il pubblico ufficiale, abusando della propria qualità o dei propri poteri, costringe o induce taluno a dare o promettere indebitamente, a lui o a un terzo, denaro o altra utilità.",
+    correct: "Errore: dal 2012 (L. 190/2012, c.d. 'legge Severino') l'art. 317 c.p. NON comprende più l'induzione, ma solo la costrizione. L'induzione indebita a dare o promettere utilità è stata trasferita al NUOVO art. 319-quater c.p., con pene diverse (3-8 anni vs 6-12 della concussione costrittiva) e con punibilità anche del privato indotto (cosa che nella concussione non era prevista). Distinzione importantissima per la difesa. INSEGNAMENTO: Copilot tende a usare formulazioni pre-riforma; per reati codicistici modificati post-2010, verificare sempre data norma.",
+    references: "Art. 317 c.p. (post L. 190/2012); art. 319-quater c.p. (introdotto da L. 190/2012); Cass. SU n. 12228/2014 ('Maldera') sulla distinzione costrizione/induzione",
+  },
+  {
+    id: "gemini-articolo-cds-inesistente",
+    title: "Gemini cita art. 142-bis del Codice della Strada (inesistente)",
+    author: null,
+    anon: true,
+    ai: "Gemini",
+    area: "amministrativo",
+    date: "2026-05-15",
+    reported: 11,
+    desc: "Chiedendo la disciplina degli autovelox fissi, Gemini cita un inesistente 'art. 142-bis del Codice della Strada' con disposizioni plausibili.",
+    prompt: "Quali sono i requisiti normativi per l'installazione di autovelox fissi su strada urbana di scorrimento? Cita gli articoli del Codice della Strada.",
+    wrong: "L'art. 142-bis del Codice della Strada, introdotto dal D.L. 121/2002, prevede che gli autovelox fissi su strade urbane di scorrimento debbano essere segnalati con cartelli specifici posti almeno 250 metri prima del dispositivo. Il decreto attuativo dell'art. 142-bis specifica anche le caratteristiche cromatiche dei segnali.",
+    correct: "L'art. 142-bis del Codice della Strada (D.Lgs. 285/1992) NON esiste. La disciplina degli autovelox è all'art. 142 (limiti di velocità) + art. 201 c. 1-bis (presupposti contestazione differita) + Decreto Ministeriale 282/2017 (tecnico). Il segnalamento è previsto dal D.M. 282/2017 e dalla Direttiva del Ministero dell'Interno 300/A/9554/14/144/5/20/3 del 14/8/2009. Distanza minima segnale-postazione: 250 metri su strade urbane di scorrimento, 1 km su autostrade. INSEGNAMENTO: Gemini inventa numerazioni 'bis' con confidenza. Verificare SEMPRE su Normattiva.it.",
+    references: "D.Lgs. 285/1992 (CdS) art. 142, 201; D.M. 282/2017; Direttiva Min. Int. 14/8/2009",
+  },
+  {
+    id: "claude-art-645-cpc",
+    title: "Claude sbaglia decorrenza termine opposizione ingiuntivo",
+    author: "Avv. Tommaso Greco",
+    anon: false,
+    ai: "Claude",
+    area: "contenzioso",
+    date: "2026-05-11",
+    reported: 9,
+    desc: "Chiedendo se il termine di opposizione a decreto ingiuntivo decorra dalla notifica o dalla conoscenza, Claude risponde 'dalla conoscenza effettiva', errato.",
+    prompt: "Da quando decorre il termine di 40 giorni per opporsi a un decreto ingiuntivo notificato a una società?",
+    wrong: "Il termine di 40 giorni per opporsi al decreto ingiuntivo ex art. 645 c.p.c. decorre dalla conoscenza effettiva del decreto da parte del legale rappresentante della società. Pertanto, se la notifica è avvenuta presso la sede ma il legale rappresentante non ne è venuto a conoscenza tempestivamente, il termine può decorrere da quel momento successivo.",
+    correct: "Errore. Il termine decorre dalla NOTIFICA, non dalla conoscenza effettiva (art. 641 c.p.c. + art. 645 c.p.c.). Per le società, la notifica al rappresentante o presso la sede legale fa decorrere il termine indipendentemente dalla conoscenza effettiva. L'unico rimedio per 'mancata conoscenza' è l'opposizione tardiva ex art. 650 c.p.c., subordinata a prova di irregolarità della notifica, caso fortuito o forza maggiore. INSEGNAMENTO: su termini decadenziali processuali, Claude a volte confonde 'decorrenza' con 'consapevolezza'. Verificare SEMPRE il dato normativo testuale.",
+    references: "Art. 641, 645, 650 c.p.c.; Cass. SU n. 9938/2005 sulla decorrenza dalla notifica",
+  },
+  {
+    id: "codex-dpa-art28-g",
+    title: "Codex genera check DPA dimenticando art. 28(3)(g) GDPR",
+    author: "Avv. Marco Ferrari",
+    anon: false,
+    ai: "Codex",
+    area: "privacy",
+    date: "2026-05-07",
+    reported: 8,
+    desc: "Chiedendo a Codex di scrivere uno script che verifichi i requisiti dell'art. 28(3) GDPR in un DPA, il codice omette il check sulla lettera (g) — assistenza al titolare per esercizio diritti interessati.",
+    prompt: "Scrivimi una funzione Python che verifichi se un Data Processing Agreement contenga tutte le clausole obbligatorie ex art. 28(3) GDPR. Usa una lista di pattern regex per ciascun requisito.",
+    wrong: "```python\nREQUIREMENTS = [\n    ('subject_matter', r'subject.{0,20}matter|oggetto.{0,20}trattamento'),\n    ('duration', r'duration|durata'),\n    ('nature', r'nature.{0,20}purpose|natura.{0,20}finalit'),\n    ('confidentiality', r'confidential|riservat'),\n    ('security', r'security.{0,20}measures|misure.{0,20}sicurezza'),\n    ('subprocessors', r'subprocessor|sub.{0,3}processor'),\n    ('breach', r'breach.{0,20}notification|notifica.{0,20}violazion'),\n    ('return_deletion', r'return.{0,10}deletion|restituz|cancellaz'),\n    ('audit', r'audit|ispezion'),\n]\n```",
+    correct: "Manca il check per art. 28(3)(g): \"assistenza al titolare per il riscontro alle richieste degli interessati nell'esercizio dei diritti di cui al Capo III\". Questo è uno dei requisiti più dimenticati DAI DPA reali, e Codex coerentemente lo omette dalla lista. Da aggiungere: `('data_subject_rights', r'data.{0,5}subject.{0,5}rights|diritti.{0,5}interessat|capo.{0,5}III')`. INSEGNAMENTO: quando Codex genera elenchi di requisiti normativi, controllare incrociando col testo della norma — gli elenchi puliti sono i più sospetti di omissioni.",
+    references: "Reg. UE 2016/679 art. 28(3) lett. (a)-(j); Capo III GDPR (artt. 12-23)",
+  },
+  {
+    id: "chatgpt-ritenuta-acconto",
+    title: "ChatGPT confonde aliquota ritenuta acconto su parcella",
+    author: null,
+    anon: true,
+    ai: "ChatGPT",
+    area: "lavoro",
+    date: "2026-05-04",
+    reported: 7,
+    desc: "Chiedendo l'aliquota di ritenuta d'acconto su parcella di avvocato emessa a società italiana, ChatGPT risponde 23% (aliquota su redditi da lavoro autonomo per persone fisiche), confondendo regimi.",
+    prompt: "Quale aliquota di ritenuta d'acconto applica la mia controparte (S.r.l. italiana) sulla fattura che le emetto come avvocato (P.IVA italiana, regime ordinario)?",
+    wrong: "L'aliquota di ritenuta d'acconto applicata sulla parcella dell'avvocato è del 23%, corrispondente all'aliquota IRPEF del primo scaglione. Pertanto, se emetti fattura per 1.000 euro + IVA, la S.r.l. tratterrà 230 euro di ritenuta che ti sarà accreditata come acconto IRPEF.",
+    correct: "Errore di FRAMING. La ritenuta d'acconto sui redditi da lavoro autonomo NON è l'aliquota IRPEF, è l'aliquota fissa del 20% prevista dall'art. 25 DPR 600/1973. Anche se il primo scaglione IRPEF è al 23%, la ritenuta d'acconto su prestazioni professionali è sempre 20%. (Per professionisti residenti, ovvio; per non residenti regime diverso). INSEGNAMENTO: ChatGPT confonde ritenute d'acconto con scaglioni IRPEF — sono cose diverse. La ritenuta è 'acconto' di un'imposta che si liquida poi a fine anno; il 20% è un parametro fisso ex lege, non uno scaglione.",
+    references: "Art. 25 DPR 600/1973; Art. 53 TUIR (redditi da lavoro autonomo)",
+  },
+  {
+    id: "claude-precedente-cgue-trust",
+    title: "Claude inventa precedente CGUE su trust estero",
+    author: "Avv. Beatrice Mancuso",
+    anon: false,
+    ai: "Claude",
+    area: "commerciale",
+    date: "2026-04-29",
+    reported: 6,
+    desc: "Chiedendo precedenti CGUE su trasparenza dei trust esteri ai fini tassazione, Claude cita 'CGUE C-432/22 Trustees v. Commissione' che non esiste.",
+    prompt: "Esistono precedenti della Corte di Giustizia UE in materia di obbligo di trasparenza dei trust esteri (settlor non UE) ai fini fiscali per i beneficiari residenti UE?",
+    wrong: "Sì, il precedente di riferimento è CGUE 14 ottobre 2023, causa C-432/22 'Trustees of European Charitable Trust v. Commissione', che ha stabilito che gli Stati membri possono richiedere la disclosure del settlor e dei beneficiari anche per trust istituiti in giurisdizioni non UE, purché la richiesta sia proporzionata e non discriminatoria. Il principio è coerente con la Direttiva DAC6.",
+    correct: "Il riferimento CGUE C-432/22 NON esiste nei repository ufficiali (curia.europa.eu, EUR-Lex). Il principio sostanziale citato è plausibile e si avvicina a quello espresso in alcuni casi reali (es. C-694/20 Orde van Vlaamse Balies, su segreto professionale + DAC6), ma il nome della causa è fabbricato. INSEGNAMENTO: per precedenti CGUE, l'unica fonte affidabile è curia.europa.eu. Claude inventa con grande fluency in materia europea.",
+    references: "C-694/20 (vero, su DAC6 e segreto avvocato); Dir. UE 2018/822 (DAC6); curia.europa.eu (verifica)",
+  },
+];
+
+// ===== AI tools tassonomia =====
+// ===== State =====
+const state = {
+  search: "",
+  activeAreas: new Set(AREE),
+  sort: "reviewed",
+  helpfulVoted: new Set(),
+  tab: "skill",
+  errSearch: "",
+  errActiveAreas: new Set(AREE),
+  errActiveTools: new Set(AI_TOOLS),
+  errSort: "recent",
+};
+
+// ===== Render pills =====
+function renderPills() {
+  const pills = document.getElementById("pills");
+  const reset = pills.querySelector(".reset");
+  // remove existing pill buttons except label and reset
+  pills.querySelectorAll(".pill:not(.reset)").forEach(p => p.remove());
+  AREE.forEach(area => {
+    const b = document.createElement("button");
+    b.className = "pill";
+    b.textContent = area;
+    b.setAttribute("aria-pressed", state.activeAreas.has(area) ? "true" : "false");
+    b.onclick = () => {
+      if (state.activeAreas.has(area)) state.activeAreas.delete(area);
+      else state.activeAreas.add(area);
+      renderPills();
+      renderGrid();
+    };
+    pills.insertBefore(b, reset);
+  });
+}
+
+function resetFilters() {
+  state.search = "";
+  document.getElementById("search").value = "";
+  state.activeAreas = new Set(AREE);
+  renderPills();
+  renderGrid();
+}
+
+function setSort(v) {
+  state.sort = v;
+  renderGrid();
+}
+
+// ===== Stars helpers =====
+function avgRating(s) {
+  if (!s.reviews || s.reviews.length === 0) return 0;
+  const sum = s.reviews.reduce((acc, r) => acc + r.stars, 0);
+  return sum / s.reviews.length;
+}
+
+function renderStarsGlyph(value) {
+  // value 0..5; round to nearest 0.5 for glyph (we use full+empty + half via ½)
+  const full = Math.floor(value + 0.001);
+  const half = (value - full) >= 0.5 ? 1 : 0;
+  const empty = 5 - full - half;
+  let out = "";
+  for (let i = 0; i < full; i++) out += "★";
+  if (half) out += "★";
+  for (let i = 0; i < empty; i++) out += "☆";
+  return out;
+}
+
+function renderStarsBlock(s) {
+  const n = s.reviews ? s.reviews.length : 0;
+  if (n === 0) {
+    return `<span class="stars-empty-state">— nessuna recensione</span>`;
+  }
+  const avg = avgRating(s);
+  return `<span class="stars" title="${avg.toFixed(2)} su 5">
+    <span class="stars-glyph">${renderStarsGlyph(avg)}</span>
+    <span class="stars-avg">${avg.toFixed(1)}</span>
+    <span class="stars-count">· ${n} ${n === 1 ? 'recensione' : 'recensioni'}</span>
+  </span>`;
+}
+
+function compareSkills(a, b) {
+  if (state.sort === "rating") {
+    const ra = avgRating(a), rb = avgRating(b);
+    if (ra !== rb) return rb - ra;
+    return (b.reviews?.length || 0) - (a.reviews?.length || 0);
+  }
+  if (state.sort === "reviewed") {
+    const na = a.reviews?.length || 0, nb = b.reviews?.length || 0;
+    if (na !== nb) return nb - na;
+    return avgRating(b) - avgRating(a);
+  }
+  if (state.sort === "recent") {
+    const da = a.updated_at || "0000-00-00", db = b.updated_at || "0000-00-00";
+    return db.localeCompare(da);
+  }
+  return 0;
+}
+
+// ===== Render grid =====
+function renderGrid() {
+  const grid = document.getElementById("grid");
+  const q = state.search.trim().toLowerCase();
+  const matches = SKILLS.filter(s => {
+    if (!state.activeAreas.has(s.area)) return false;
+    if (!q) return true;
+    const blob = (s.title + " " + s.author + " " + s.desc + " " + s.area).toLowerCase();
+    return blob.includes(q);
+  }).sort(compareSkills);
+
+  grid.innerHTML = "";
+  if (matches.length === 0) {
+    const empty = document.createElement("div");
+    empty.className = "empty";
+    empty.textContent = "Nessuna skill corrisponde ai filtri. Prova ad azzerare i filtri o cambiare ricerca.";
+    grid.appendChild(empty);
+    return;
+  }
+
+  matches.forEach(s => grid.appendChild(renderCard(s)));
+}
+
+function renderReviewItem(r, skillId, idx) {
+  const voteKey = `${skillId}:${idx}`;
+  const voted = state.helpfulVoted.has(voteKey);
+  const helpful = (r.helpful || 0) + (voted ? 1 : 0);
+  const authorHtml = r.anon
+    ? `<span class="review-author anon">Avvocato (anonimo)</span>`
+    : `<span class="review-author">${escapeHtml(r.author || '—')}</span>`;
+  return `<div class="review-item">
+    <div class="review-head">
+      <div>
+        ${authorHtml}
+      </div>
+      <div>
+        <span class="stars-glyph">${renderStarsGlyph(r.stars)}</span>
+        <span class="review-date">· ${escapeHtml(r.date)}</span>
+      </div>
+    </div>
+    <p class="review-body">${escapeHtml(r.text)}</p>
+    <div class="review-foot">
+      <button class="btn-helpful ${voted ? 'voted' : ''}" onclick="voteHelpful('${skillId}', ${idx}, this)">
+        ${voted ? '✓ Utile' : 'Utile'} (${helpful})
+      </button>
+    </div>
+  </div>`;
+}
+
+function renderCard(s) {
+  const card = document.createElement("article");
+  card.className = "card";
+  card.dataset.id = s.id;
+  card.dataset.open = "false";
+
+  const hasGh = !!s.github;
+  const reviews = s.reviews || [];
+  // sort reviews most recent first for display
+  const sortedReviews = [...reviews].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+
+  card.innerHTML = `
+    <h3>${escapeHtml(s.title)}</h3>
+    <div class="card-meta">
+      <span class="area-badge">${escapeHtml(s.area)}</span>
+      <span>${escapeHtml(s.author)}</span>
+      ${hasGh ? '<span class="gh-badge">GitHub</span>' : ''}
+    </div>
+    <div>${renderStarsBlock(s)}</div>
+    <p class="card-desc">${escapeHtml(s.desc)}</p>
+    <div class="detail">
+      <div class="detail-section">
+        <div class="detail-label">Descrizione</div>
+        <p class="detail-desc">${escapeHtml(s.desc)}</p>
+      </div>
+      <div class="detail-section">
+        <div class="detail-label">Contenuto della skill</div>
+        <pre class="skill-content">${escapeHtml(s.content)}</pre>
+      </div>
+      ${s.references ? `<div class="detail-section">
+        <div class="detail-label">Riferimenti normativi</div>
+        <div class="refs">${escapeHtml(s.references)}</div>
+      </div>` : ''}
+      <div class="detail-actions">
+        <button class="btn-copy" onclick="copyContent('${s.id}', this)">Copia contenuto</button>
+        ${s.github ? `<a class="gh-link" href="${escapeHtml(s.github)}" target="_blank" rel="noopener">Apri su GitHub ↗</a>` : ''}
+      </div>
+      <div class="detail-section" style="margin-top:16px;">
+        <div class="reviews-block">
+          <div class="reviews-head">
+            <h4>Recensioni ${reviews.length ? `(${reviews.length}) · media ${avgRating(s).toFixed(1)}/5` : '— ancora nessuna'}</h4>
+            <button class="btn-review" onclick="openReviewModal('${s.id}')">Scrivi una recensione</button>
+          </div>
+          ${sortedReviews.length
+            ? sortedReviews.map((r, i) => renderReviewItem(r, s.id, reviews.indexOf(r))).join('')
+            : '<p style="margin:0;font-size:13px;color:var(--muted);font-style:italic;">Sii il primo a recensirla — racconta come l\'hai usata e cosa è successo.</p>'}
+        </div>
+      </div>
+    </div>
+    <div class="card-footer">
+      <button class="card-open" onclick="toggleCard(this)">Apri</button>
+    </div>
+  `;
+  return card;
+}
+
+function voteHelpful(skillId, idx, btn) {
+  const key = `${skillId}:${idx}`;
+  const s = SKILLS.find(x => x.id === skillId);
+  if (!s || !s.reviews || !s.reviews[idx]) return;
+  const r = s.reviews[idx];
+
+  if (state.helpfulVoted.has(key)) {
+    // Già votato — locale-only, niente unvote nel backend (idempotente per PK)
+    return;
+  }
+  state.helpfulVoted.add(key);
+  r.helpful = (r.helpful || 0) + 1;
+  btn.classList.add("voted");
+  btn.innerHTML = `✓ Utile (${r.helpful})`;
+
+  if (BACKEND_ENABLED && r._dbId) {
+    sbInsert("helpful_votes", {
+      review_id: r._dbId,
+      voter_fingerprint: getVoterFingerprint(),
+    }).catch(err => {
+      // Idempotente: se PK conflict (già votato dallo stesso fingerprint), va bene
+      if (!String(err.message).includes("23505") && !String(err.message).includes("duplicate")) {
+        console.warn("voteHelpful failed", err);
+      }
+    });
+  }
+}
+
+// ===== Review modal =====
+let reviewTargetSkillId = null;
+
+function openReviewModal(skillId) {
+  reviewTargetSkillId = skillId;
+  const s = SKILLS.find(x => x.id === skillId);
+  document.getElementById("reviewSubtitle").textContent = "Per la skill: " + (s ? s.title : "—");
+  // reset star picker
+  setStarPicker(0);
+  document.getElementById("reviewForm").reset();
+  document.getElementById("reviewModal").classList.add("show");
+}
+
+function closeReviewModal() {
+  document.getElementById("reviewModal").classList.remove("show");
+  reviewTargetSkillId = null;
+}
+
+function setStarPicker(value) {
+  document.getElementById("starsValue").value = String(value);
+  document.querySelectorAll("#starPicker span").forEach(el => {
+    const v = parseInt(el.dataset.v, 10);
+    el.classList.toggle("on", v <= value);
+  });
+}
+
+function initStarPicker() {
+  const picker = document.getElementById("starPicker");
+  picker.querySelectorAll("span").forEach(el => {
+    el.addEventListener("click", () => setStarPicker(parseInt(el.dataset.v, 10)));
+  });
+}
+
+async function submitReview(e) {
+  e.preventDefault();
+  const stars = parseInt(document.getElementById("starsValue").value, 10);
+  if (!stars || stars < 1 || stars > 5) {
+    alert("Seleziona da 1 a 5 stelle.");
+    return;
+  }
+  const form = e.target;
+  const author = form.querySelector('[name="author"]')?.value.trim() || "Avvocato";
+  const email = form.querySelector('[name="email"]')?.value.trim() || null;
+  const text = form.querySelector('[name="text"]')?.value.trim();
+  const anonymous = !!form.querySelector('[name="anonymous"]')?.checked;
+
+  // Cerca skill_id (DB UUID) della skill target
+  const targetSkill = SKILLS.find(x => x.id === reviewTargetSkillId);
+  if (!targetSkill) { alert("Errore interno: skill non trovata."); return; }
+
+  closeReviewModal();
+  form.reset();
+  setStarPicker(0);
+  const t = document.getElementById("toast");
+  t.textContent = email
+    ? "Pubblico la recensione…"
+    : "Pubblico la recensione…";
+  t.classList.add("show");
+
+  let editTokenSent = false;
+  if (BACKEND_ENABLED && targetSkill._dbId) {
+    try {
+      const resp = await sbFunction("submit-with-email", {
+        kind: "review",
+        email: email || null,
+        payload: {
+          skill_id: targetSkill._dbId,
+          stars,
+          text,
+          author_name: author,
+          anonymous,
+        },
+      });
+      editTokenSent = !!resp.edit_token_sent;
+      // Aggiungi al rendering locale per immediato feedback
+      const newReview = { author, anon: anonymous, stars, text, date: new Date().toISOString().slice(0,10), helpful: 0, _dbId: resp.id };
+      targetSkill.reviews = targetSkill.reviews || [];
+      targetSkill.reviews.push(newReview);
+      targetSkill.updated_at = newReview.date;
+      renderGrid();
+    } catch (err) {
+      console.error(err);
+      t.textContent = "Errore: " + err.message;
+      setTimeout(() => { t.classList.remove("show"); t.textContent = "Skill pubblicata. Grazie per il contributo."; }, 3500);
+      return;
+    }
+  } else {
+    // Mock: aggiungi solo localmente
+    const newReview = { author, anon: anonymous, stars, text, date: new Date().toISOString().slice(0,10), helpful: 0 };
+    targetSkill.reviews = targetSkill.reviews || [];
+    targetSkill.reviews.push(newReview);
+    targetSkill.updated_at = newReview.date;
+    renderGrid();
+  }
+
+  t.textContent = editTokenSent
+    ? "Recensione pubblicata. Controlla l'email per il link di modifica."
+    : "Recensione pubblicata. Grazie.";
+  setTimeout(() => {
+    t.classList.remove("show");
+    t.textContent = "Skill pubblicata. Grazie per il contributo.";
+  }, 3500);
+}
+
+function toggleCard(btn) {
+  const card = btn.closest(".card");
+  const open = card.dataset.open === "true";
+  card.dataset.open = open ? "false" : "true";
+  btn.textContent = open ? "Apri" : "Chiudi";
+}
+
+function copyContent(id, btn) {
+  const s = SKILLS.find(x => x.id === id);
+  if (!s) return;
+  navigator.clipboard.writeText(s.content).then(() => {
+    btn.classList.add("ok");
+    const oldText = btn.textContent;
+    btn.textContent = "Copiato ✓";
+    setTimeout(() => {
+      btn.classList.remove("ok");
+      btn.textContent = oldText;
+    }, 1600);
+  }).catch(() => {
+    // fallback: prompt
+    window.prompt("Copia manualmente con Ctrl/Cmd+C:", s.content);
+  });
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  })[c]);
+}
+
+// ===== Search wiring =====
+document.getElementById("search").addEventListener("input", e => {
+  state.search = e.target.value;
+  renderGrid();
+});
+
+// ===== Modal =====
+function openShareModal() { document.getElementById("modal").classList.add("show"); }
+function closeModal() { document.getElementById("modal").classList.remove("show"); }
+
+async function submitForm(e) {
+  e.preventDefault();
+  const f = e.target;
+  const author = f.querySelector('[name="name"]').value.trim();
+  const email = f.querySelector('[name="email"]').value.trim() || null;
+  const title = f.querySelector('[name="title"]').value.trim();
+  const area = f.querySelector('[name="area"]').value;
+  const desc = f.querySelector('[name="desc"]').value.trim();
+  const content = f.querySelector('[name="content"]').value.trim();
+  const github = f.querySelector('[name="github"]').value.trim() || null;
+  const refs = f.querySelector('[name="refs"]').value.trim() || null;
+
+  closeModal();
+  f.reset();
+  const t = document.getElementById("toast");
+  t.textContent = "Pubblico la skill…";
+  t.classList.add("show");
+
+  if (BACKEND_ENABLED) {
+    try {
+      const resp = await sbFunction("submit-with-email", {
+        kind: "skill",
+        email: email,
+        payload: {
+          title,
+          author_name: author,
+          anonymous: false,
+          area,
+          ai_compatibility: ["Claude"],
+          description: desc,
+          content,
+          github_url: github,
+          references_text: refs,
+        },
+      });
+      // Aggiungi alla lista locale per immediato feedback
+      const newSkill = {
+        id: title.toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,40) + "-" + resp.id.slice(0,6),
+        title, author, area,
+        desc, content,
+        github: github,
+        references: refs,
+        reviews: [],
+        updated_at: new Date().toISOString().slice(0,10),
+        _dbId: resp.id,
+      };
+      SKILLS.push(newSkill);
+      renderGrid();
+    } catch (err) {
+      console.error(err);
+      t.textContent = "Errore: " + err.message;
+      setTimeout(() => { t.classList.remove("show"); t.textContent = "Skill pubblicata. Grazie per il contributo."; }, 3500);
+      return;
+    }
+  } else {
+    // Mock: aggiungi solo localmente
+    SKILLS.push({
+      id: "mock-" + Math.random().toString(36).slice(2,8),
+      title, author, area, desc, content,
+      github, references: refs, reviews: [],
+      updated_at: new Date().toISOString().slice(0,10),
+    });
+    renderGrid();
+  }
+
+  t.textContent = "Skill pubblicata. Grazie per il contributo.";
+  setTimeout(() => t.classList.remove("show"), 3000);
+}
+
+// ===== Tab switching =====
+function switchTab(tab) {
+  state.tab = tab;
+  document.querySelectorAll(".tab").forEach(t => {
+    t.setAttribute("aria-selected", t.dataset.tab === tab ? "true" : "false");
+  });
+  document.getElementById("viewSkill").classList.toggle("active", tab === "skill");
+  document.getElementById("viewErrori").classList.toggle("active", tab === "errori");
+
+  // Hero + CTA cambiano per tab
+  const title = document.getElementById("heroTitle");
+  const sub = document.getElementById("heroSub");
+  const cta = document.getElementById("heroCta");
+  if (tab === "skill") {
+    title.textContent = "Skill Sharing Giuristi AI";
+    sub.textContent = "Condividi quello che sai fare con Claude. Senza GitHub. Le tue istruzioni, pronte da copiare e usare.";
+    cta.textContent = "Condividi una skill";
+    cta.onclick = openShareModal;
+  } else {
+    title.textContent = "Errori dell'AI nei contesti legali italiani";
+    sub.textContent = "Casi reali in cui l'AI ha sbagliato. Anonimizza il caso e condividi: si impara di più dagli errori altrui che dai successi.";
+    cta.textContent = "Segnala un errore";
+    cta.onclick = openErrorModal;
+  }
+}
+
+// ===== Errori: pills + filters =====
+function renderErrPills() {
+  // Area pills
+  const areaPills = document.getElementById("errPillsArea");
+  const resetBtn = areaPills.querySelector(".reset");
+  areaPills.querySelectorAll(".pill:not(.reset)").forEach(p => p.remove());
+  AREE.forEach(area => {
+    const b = document.createElement("button");
+    b.className = "pill";
+    b.textContent = area;
+    b.setAttribute("aria-pressed", state.errActiveAreas.has(area) ? "true" : "false");
+    b.onclick = () => {
+      if (state.errActiveAreas.has(area)) state.errActiveAreas.delete(area);
+      else state.errActiveAreas.add(area);
+      renderErrPills();
+      renderErrGrid();
+    };
+    areaPills.insertBefore(b, resetBtn);
+  });
+  // AI pills
+  const aiPills = document.getElementById("errPillsAi");
+  aiPills.querySelectorAll(".pill").forEach(p => p.remove());
+  AI_TOOLS.forEach(tool => {
+    const b = document.createElement("button");
+    b.className = "pill";
+    b.textContent = tool;
+    b.setAttribute("aria-pressed", state.errActiveTools.has(tool) ? "true" : "false");
+    b.onclick = () => {
+      if (state.errActiveTools.has(tool)) state.errActiveTools.delete(tool);
+      else state.errActiveTools.add(tool);
+      renderErrPills();
+      renderErrGrid();
+    };
+    aiPills.appendChild(b);
+  });
+}
+
+function resetErrFilters() {
+  state.errSearch = "";
+  document.getElementById("errSearch").value = "";
+  state.errActiveAreas = new Set(AREE);
+  state.errActiveTools = new Set(AI_TOOLS);
+  renderErrPills();
+  renderErrGrid();
+}
+
+function setErrSort(v) {
+  state.errSort = v;
+  renderErrGrid();
+}
+
+function compareErrors(a, b) {
+  if (state.errSort === "reported") {
+    if (a.reported !== b.reported) return b.reported - a.reported;
+    return (b.date || '').localeCompare(a.date || '');
+  }
+  // recent
+  return (b.date || '').localeCompare(a.date || '');
+}
+
+function renderErrGrid() {
+  const grid = document.getElementById("errGrid");
+  const q = state.errSearch.trim().toLowerCase();
+  const matches = ERRORS.filter(e => {
+    if (!state.errActiveAreas.has(e.area)) return false;
+    if (!state.errActiveTools.has(e.ai)) return false;
+    if (!q) return true;
+    const blob = (e.title + " " + (e.author||"") + " " + e.desc + " " + e.area + " " + e.ai).toLowerCase();
+    return blob.includes(q);
+  }).sort(compareErrors);
+
+  grid.innerHTML = "";
+  if (matches.length === 0) {
+    const empty = document.createElement("div");
+    empty.className = "empty";
+    empty.textContent = "Nessun errore corrisponde ai filtri. Prova ad azzerare i filtri o cambiare ricerca.";
+    grid.appendChild(empty);
+    return;
+  }
+  matches.forEach(e => grid.appendChild(renderErrorCard(e)));
+}
+
+function renderErrorCard(e) {
+  const card = document.createElement("article");
+  card.className = "card";
+  card.dataset.id = e.id;
+  card.dataset.open = "false";
+  const authorHtml = e.anon
+    ? `<span class="review-author anon">Avvocato (anonimo)</span>`
+    : `<span>${escapeHtml(e.author || '—')}</span>`;
+  card.innerHTML = `
+    <h3>${escapeHtml(e.title)}</h3>
+    <div class="card-meta">
+      <span class="ai-badge">${escapeHtml(e.ai)}</span>
+      <span class="area-badge">${escapeHtml(e.area)}</span>
+      ${authorHtml}
+    </div>
+    <p class="card-desc">${escapeHtml(e.desc)}</p>
+    <div class="card-meta" style="font-size:12px;color:var(--muted);">
+      <span>📅 ${escapeHtml(e.date)}</span>
+      <span>· ${e.reported} segnalazioni</span>
+    </div>
+    <div class="detail">
+      <div class="err-section">
+        <div class="err-section-label">Contesto del caso (anonimizzato)</div>
+        <p>${escapeHtml(e.desc)}</p>
+      </div>
+      <div class="err-section">
+        <div class="err-section-label">Prompt all'AI</div>
+        <pre>${escapeHtml(e.prompt)}</pre>
+      </div>
+      <div class="err-section wrong">
+        <div class="err-section-label">Risposta errata dell'AI ✗</div>
+        <pre>${escapeHtml(e.wrong)}</pre>
+      </div>
+      <div class="err-section correct">
+        <div class="err-section-label">Cosa era corretto ✓</div>
+        <p>${escapeHtml(e.correct)}</p>
+      </div>
+      ${e.references ? `<div class="detail-section">
+        <div class="detail-label">Riferimenti</div>
+        <div class="refs">${escapeHtml(e.references)}</div>
+      </div>` : ''}
+    </div>
+    <div class="card-footer">
+      <button class="card-open" onclick="toggleCard(this)">Apri</button>
+    </div>
+  `;
+  return card;
+}
+
+// ===== Error modal =====
+function openErrorModal() {
+  document.getElementById("errorForm").reset();
+  document.getElementById("errorModal").classList.add("show");
+}
+function closeErrorModal() {
+  document.getElementById("errorModal").classList.remove("show");
+}
+async function submitError(ev) {
+  ev.preventDefault();
+  const f = ev.target;
+  const ai = f.querySelector('[name="ai"]').value;
+  const area = f.querySelector('[name="area"]').value;
+  const title = f.querySelector('[name="title"]').value.trim();
+  const desc = f.querySelector('[name="desc"]').value.trim();
+  const prompt = f.querySelector('[name="prompt"]').value.trim();
+  const wrong = f.querySelector('[name="wrong"]').value.trim();
+  const correct = f.querySelector('[name="correct"]').value.trim();
+  const author = f.querySelector('[name="author"]').value.trim();
+  const email = f.querySelector('[name="email"]').value.trim() || null;
+  const anonymous = !!f.querySelector('[name="anonymous"]').checked;
+
+  closeErrorModal();
+  f.reset();
+  const t = document.getElementById("toast");
+  t.textContent = "Pubblico la segnalazione…";
+  t.classList.add("show");
+
+  let editTokenSent = false;
+  if (BACKEND_ENABLED) {
+    try {
+      const resp = await sbFunction("submit-with-email", {
+        kind: "error",
+        email: email,
+        payload: {
+          title,
+          ai_tool: ai,
+          area,
+          author_name: author,
+          anonymous,
+          description: desc,
+          prompt,
+          wrong_answer: wrong,
+          correction: correct,
+        },
+      });
+      editTokenSent = !!resp.edit_token_sent;
+      ERRORS.push({
+        id: title.toLowerCase().replace(/[^a-z0-9]+/g,'-').slice(0,40) + "-" + resp.id.slice(0,6),
+        title, author, anon: anonymous,
+        ai, area,
+        date: new Date().toISOString().slice(0,10),
+        reported: 1,
+        desc, prompt, wrong, correct,
+        references: null,
+        _dbId: resp.id,
+      });
+      renderErrGrid();
+      document.getElementById("errCount").textContent = String(ERRORS.length);
+    } catch (err) {
+      console.error(err);
+      t.textContent = "Errore: " + err.message;
+      setTimeout(() => { t.classList.remove("show"); t.textContent = "Skill pubblicata. Grazie per il contributo."; }, 3500);
+      return;
+    }
+  } else {
+    ERRORS.push({
+      id: "mock-err-" + Math.random().toString(36).slice(2,8),
+      title, author, anon: anonymous,
+      ai, area, date: new Date().toISOString().slice(0,10),
+      reported: 1, desc, prompt, wrong, correct, references: null,
+    });
+    renderErrGrid();
+    document.getElementById("errCount").textContent = String(ERRORS.length);
+  }
+
+  t.textContent = editTokenSent
+    ? "Segnalazione pubblicata. Controlla l'email per il link di modifica."
+    : "Segnalazione pubblicata. Grazie.";
+  setTimeout(() => {
+    t.classList.remove("show");
+    t.textContent = "Skill pubblicata. Grazie per il contributo.";
+  }, 3500);
+}
+
+// ===== Errori search wiring =====
+document.getElementById("errSearch").addEventListener("input", ev => {
+  state.errSearch = ev.target.value;
+  renderErrGrid();
+});
+
+// ===== Removal request modal =====
+function openRemovalModal() {
+  document.getElementById("removalForm").reset();
+  document.getElementById("removalModal").classList.add("show");
+}
+function closeRemovalModal() {
+  document.getElementById("removalModal").classList.remove("show");
+}
+function submitRemoval(ev) {
+  ev.preventDefault();
+  const f = ev.target;
+  const ref = f.querySelector('[name="ref"]').value.trim();
+  const reason = f.querySelector('[name="reason"]').value.trim();
+  const from = f.querySelector('[name="from"]').value.trim();
+  // Wrapper alfa: mailto: prefilled. Indirizzo nascosto al DOM testuale, generato in JS al click.
+  const TO = ["m.loi", "@", "icloud.com"].join("");
+  const subj = encodeURIComponent("[Skill Sharing Giuristi X] Richiesta di rimozione contenuto");
+  const body = encodeURIComponent(
+    `Contenuto da rimuovere:\n${ref}\n\nMotivazione:\n${reason}\n\nEmail mittente (per risposta):\n${from || "— non fornita —"}\n`
+  );
+  closeRemovalModal();
+  ev.target.reset();
+  const t = document.getElementById("toast");
+  t.textContent = "Apro il tuo client di posta per inviare la richiesta…";
+  t.classList.add("show");
+  setTimeout(() => {
+    t.classList.remove("show");
+    t.textContent = "Skill pubblicata. Grazie per il contributo.";
+  }, 3500);
+  // Apri il client di posta dell'utente con i campi precompilati
+  window.location.href = `mailto:${TO}?subject=${subj}&body=${body}`;
+}
+
+// ===== Init =====
+async function loadFromBackend() {
+  const [dbSkills, dbErrors, dbHelpful] = await Promise.all([
+    sbGet("skills?select=*,reviews(*)&order=created_at.desc"),
+    sbGet("errors?select=*&order=created_at.desc"),
+    sbGet("review_helpful_counts?select=*"),
+  ]);
+
+  const helpfulMap = new Map(dbHelpful.map(h => [h.review_id, h.count]));
+
+  SKILLS.length = 0;
+  for (const s of dbSkills) {
+    const reviews = (s.reviews || []).map(r => ({
+      _dbId: r.id,
+      author: r.author_name,
+      anon: r.anonymous,
+      stars: r.stars,
+      text: r.text,
+      date: (r.created_at || '').slice(0, 10),
+      helpful: helpfulMap.get(r.id) || 0,
+    }));
+    const latestReviewDate = reviews.length
+      ? reviews.map(r => r.date).sort().pop()
+      : (s.created_at || '').slice(0, 10);
+    SKILLS.push({
+      id: s.slug,
+      _dbId: s.id,
+      title: s.title,
+      author: s.author_name,
+      area: s.area,
+      desc: s.description,
+      content: s.content,
+      github: s.github_url,
+      references: s.references_text,
+      reviews,
+      updated_at: latestReviewDate,
+    });
+  }
+
+  ERRORS.length = 0;
+  for (const e of dbErrors) {
+    ERRORS.push({
+      id: e.slug,
+      _dbId: e.id,
+      title: e.title,
+      author: e.author_name,
+      anon: e.anonymous,
+      ai: e.ai_tool,
+      area: e.area,
+      date: (e.created_at || '').slice(0, 10),
+      reported: e.reported_count,
+      desc: e.description,
+      prompt: e.prompt,
+      wrong: e.wrong_answer,
+      correct: e.correction,
+      references: e.references_text,
+    });
+  }
+}
+
+async function bootstrap() {
+  if (BACKEND_ENABLED) {
+    try {
+      await loadFromBackend();
+    } catch (err) {
+      console.error("Caricamento backend fallito, fallback mock locale", err);
+      seedReviews();
+    }
+  } else {
+    seedReviews();
+  }
+  renderPills();
+  renderGrid();
+  renderErrPills();
+  renderErrGrid();
+  initStarPicker();
+  document.getElementById("skillCount").textContent = String(SKILLS.length);
+  document.getElementById("errCount").textContent = String(ERRORS.length);
+}
+
+bootstrap();
+</script>
+
+</body>
+</html>
