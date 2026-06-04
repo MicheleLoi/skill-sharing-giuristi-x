@@ -1012,7 +1012,6 @@
         </thead>
         <tbody>
           <tr><td><strong>Il tuo nome</strong></td><td>Es. <em>Avv. Maria Rossi</em>. Va pubblicato (vedi anonimato sotto).</td></tr>
-          <tr><td><strong>Email</strong> <em>(opzionale)</em></td><td>Se la metti, riceverai un <strong>link permanente per modificare o cancellare il contributo</strong> via email. Se non la metti, il contributo è append-only e non può essere modificato. NB: l'email <strong>non viene mostrata pubblicamente</strong>.</td></tr>
           <tr><td><strong>Titolo</strong></td><td>Una riga descrittiva. Es. <em>"Bozza ricorso TAR — vizi atto"</em>.</td></tr>
           <tr><td><strong>Area legale</strong></td><td>Scegli dal menu: civile / penale / lavoro / amministrativo / commerciale / privacy / societario / tributario / contenzioso / ip / generale.</td></tr>
           <tr><td><strong>Cosa fanno queste istruzioni</strong></td><td>2-3 righe per un collega: cosa ottiene chi le usa.</td></tr>
@@ -1025,7 +1024,9 @@
 
       <h4>Passo 3 — Click "Pubblica"</h4>
 
-      <p>Il contributo va live subito. Reload pagina e lo vedi in cima alla griglia. Se hai messo l'email, ricevi una mail con il link "Modifica/cancella" (validità: 365 giorni).</p>
+      <p>Il contributo va live subito. Reload pagina e lo vedi in cima alla griglia.</p>
+
+      <p><strong>Nota: le skill non hanno campo email.</strong> Il contributo è <strong>append-only</strong> (come un libro pubblicato): non si modifica dopo la pubblicazione. Se hai bisogno di correggere una skill già pubblicata, puoi (a) <strong>pubblicare una v2</strong> col titolo originale seguito da " v2" e nelle prime righe del contenuto scrivere <em>"sostituisce la versione precedente"</em>, oppure (b) <strong>richiedere rimozione</strong> via il modulo "Hai bisogno di rimuovere un contenuto?" in fondo alla pagina. Le <strong>recensioni</strong> e le <strong>segnalazioni di errori</strong>, invece, hanno il campo email opzionale per ricevere il link "Modifica/cancella".</p>
 
       <h4>Anonimato</h4>
 
@@ -1199,7 +1200,6 @@
         </thead>
         <tbody>
           <tr><td><strong>Il tuo nome</strong></td><td>Es. <code>Avv. Maria Rossi</code></td></tr>
-          <tr><td><strong>Email</strong> <em>(opzionale)</em></td><td>La tua. Serve solo per ricevere — se la metti — il link "Modifica/cancella" via mail. Non viene pubblicata.</td></tr>
           <tr><td><strong>Titolo</strong></td><td>Es. <code>Lettera di messa in mora — schema studio Rossi</code></td></tr>
           <tr><td><strong>Area legale</strong></td><td><code>civile</code></td></tr>
           <tr><td><strong>Cosa fanno queste istruzioni</strong></td><td>2-3 righe. Es. <em>"Genera una lettera di messa in mora in stile forense italiano, partendo dai dati del creditore, debitore, importo e riferimento del rapporto sottostante. Tono cortese ma fermo. Indica le conseguenze del mancato pagamento entro il termine."</em></td></tr>
@@ -1252,9 +1252,7 @@ NON inventare riferimenti normativi specifici al di là di art. 1219 e
 
       <h4>Se vuoi modificare/cancellare dopo</h4>
 
-      <p>Se al Passo 2 hai messo la tua email, ricevi via mail un link permanente per modificare/cancellare il contributo in qualsiasi momento (vale 365 giorni). Conservalo.</p>
-
-      <p>Se non hai messo l'email, il contributo è <strong>append-only</strong>: non si modifica. Vuoi correggere un errore? Due strade:</p>
+      <p>Le skill sono <strong>append-only</strong>: una volta pubblicate non si modificano (come un libro pubblicato). Vuoi correggere un errore? Due strade:</p>
       <ul>
         <li><strong>Pubblica una v2</strong> con titolo <em>"Lettera di messa in mora — schema studio Rossi v2"</em> e nelle prime righe del contenuto scrivi <em>"sostituisce la versione precedente"</em></li>
         <li><strong>Richiedi rimozione</strong> via il modulo "Hai bisogno di rimuovere un contenuto?" in fondo alla pagina</li>
@@ -1375,10 +1373,6 @@ when_to_use: Quando attivare questa skill (descrizione del trigger).
       <div class="form-row">
         <label>Il tuo nome</label>
         <input required type="text" name="name" placeholder="Es. Avv. Maria Rossi">
-      </div>
-      <div class="form-row">
-        <label>Email <span class="opt">(opzionale — non pubblicata, serve solo se il maintainer deve contattarti per un problema, es. anonimizzazione mancata)</span></label>
-        <input type="email" name="email" placeholder="maria.rossi@esempio.it">
       </div>
       <div class="form-row">
         <label>Titolo</label>
@@ -2672,7 +2666,7 @@ async function submitForm(e) {
   e.preventDefault();
   const f = e.target;
   const author = f.querySelector('[name="name"]').value.trim();
-  const email = f.querySelector('[name="email"]').value.trim() || null;
+  const email = null;
   const title = f.querySelector('[name="title"]').value.trim();
   const area = f.querySelector('[name="area"]').value;
   const desc = f.querySelector('[name="desc"]').value.trim();

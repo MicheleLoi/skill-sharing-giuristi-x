@@ -58,7 +58,6 @@ In alto a destra, bottone azzurro.
 | Campo | Cosa scrivere |
 |---|---|
 | **Il tuo nome** | Es. *Avv. Maria Rossi*. Per default va pubblicato; se vuoi puoi spuntare *"Pubblica anonima"* (vedi sotto). |
-| **Email** *(opzionale)* | Se la metti, riceverai un **link permanente per modificare o cancellare il contributo** via email. Se non la metti, il contributo è append-only e non può essere modificato. NB: l'email **non viene mostrata pubblicamente**. |
 | **Titolo** | Una riga descrittiva. Es. *"Bozza ricorso TAR — vizi atto"*. |
 | **Area legale** | Scegli dal menu: civile / penale / lavoro / amministrativo / commerciale / privacy / societario / tributario / contenzioso / ip / generale. |
 | **Cosa fanno queste istruzioni** | 2-3 righe per un collega: cosa ottiene chi le usa. |
@@ -70,7 +69,9 @@ In alto a destra, bottone azzurro.
 
 ### Passo 3 — Click "Pubblica"
 
-Il contributo va live subito. Reload pagina e lo vedi in cima alla griglia. Se hai messo l'email, ricevi una mail con il link "Modifica/cancella" (validità: 365 giorni).
+Il contributo va live subito. Reload pagina e lo vedi in cima alla griglia.
+
+**Nota: le skill non hanno campo email.** Il contributo è **append-only** (come un libro pubblicato): non si modifica dopo la pubblicazione. Se hai bisogno di correggere una skill già pubblicata, puoi (a) **pubblicare una v2** col titolo originale seguito da " v2" e nelle prime righe del contenuto scrivere *"sostituisce la versione precedente"*, oppure (b) **richiedere rimozione** via il modulo "Hai bisogno di rimuovere un contenuto?" in fondo alla pagina. Le **recensioni** e le **segnalazioni di errori**, invece, hanno il campo email opzionale per ricevere il link "Modifica/cancella".
 
 ### Anonimato opt-in
 
@@ -223,7 +224,6 @@ Esempio plausibile (immagina che la tua skill sia una *"Lettera di messa in mora
 | Campo | Cosa scrivere |
 |---|---|
 | **Il tuo nome** | Es. `Avv. Maria Rossi` |
-| **Email** *(opzionale)* | La tua. Serve solo per ricevere — se la metti — il link "Modifica/cancella" via mail. Non viene pubblicata. |
 | **Titolo** | Es. `Lettera di messa in mora — schema studio Rossi` |
 | **Area legale** | `civile` |
 | **Cosa fanno queste istruzioni** | 2-3 righe. Es. *"Genera una lettera di messa in mora in stile forense italiano, partendo dai dati del creditore, debitore, importo e riferimento del rapporto sottostante. Tono cortese ma fermo. Indica le conseguenze del mancato pagamento entro il termine."* |
@@ -276,9 +276,7 @@ Toast verde di conferma. Reload pagina e la vedi in cima alla griglia, recensibi
 
 ### Se vuoi modificare/cancellare dopo
 
-Se al Passo 2 hai messo la tua email, ricevi via mail un link permanente per modificare/cancellare il contributo in qualsiasi momento (vale 365 giorni). Conservalo.
-
-Se non hai messo l'email, il contributo è **append-only**: non si modifica. Vuoi correggere un errore? Due strade:
+Le skill sono **append-only**: una volta pubblicate non si modificano (come un libro pubblicato). Vuoi correggere un errore? Due strade:
 - **Pubblica una v2** con titolo *"Lettera di messa in mora — schema studio Rossi v2"* e nelle prime righe del contenuto scrivi *"sostituisce la versione precedente"*
 - **Richiedi rimozione** via il modulo "Hai bisogno di rimuovere un contenuto?" in fondo alla pagina
 
