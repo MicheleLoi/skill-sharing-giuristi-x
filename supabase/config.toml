@@ -1,0 +1,5 @@
+[functions.submit-with-email]
+verify_jwt = false
+
+[functions.edit-via-token]
+verify_jwt = false
